@@ -77,7 +77,7 @@ Node.js (LTS), Git, Android Studio (untuk emulator).
 
 ### Clone Repository
 ```bash
-git clone https://github.com/username/resepbunda.git
+git clone https://github.com/syahrullrmdhn/resepbunda.git
 cd resepbunda
 ````
 
