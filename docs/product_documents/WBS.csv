@@ -1,0 +1,74 @@
+ID,Screen/Module,Task,Assigned To,Est. Hours,Dependencies,Priority
+0,Project Setup,,Dev 1,,,P0
+0.1,Project Setup,Init RN project + dependencies,Dev 1,2,-,P0
+0.2,Project Setup,"Navigation setup (Stack, Tab, Modal)",Dev 1,3,0.1,P0
+0.3,Project Setup,TypeScript types & interfaces,Dev 1,2,0.1,P0
+0.4,Project Setup,AsyncStorage helpers + mock data,Dev 1,2,0.1,P0
+0.5,Project Setup,Git workflow & PR template,Dev 1,1,0.1,P0
+1,Login Screen,,Dev 2,,,P0
+1.1,Login Screen,UI: form email & password,Dev 2,2,0.2,P0
+1.2,Login Screen,Logic: validate & save to storage (mock),Dev 2,2,"0.4, 1.1",P0
+1.3,Login Screen,Forgot password (mailto link),Dev 2,1,1.1,P1
+2,Home Screen,,Dev 3,,,P0
+2.1,Home Screen,Recipe card component,Dev 3,3,0.3,P0
+2.2,Home Screen,Feed layout dengan FlatList,Dev 3,2,2.1,P0
+2.3,Home Screen,Search bar,Dev 3,2,2.2,P1
+2.4,Home Screen,Category filter chips,Dev 3,2,2.2,P1
+2.5,Home Screen,"Filter logic (search, category, privacy)",Dev 3,3,"2.3, 2.4",P1
+3,Recipe Detail Screen,,Dev 4,,,P0
+3.1,Recipe Detail Screen,Layout: header dengan image & title,Dev 4,2,0.2,P0
+3.2,Recipe Detail Screen,Ingredients section,Dev 4,2,3.1,P0
+3.3,Recipe Detail Screen,Steps section (numbered),Dev 4,2,3.1,P0
+3.4,Recipe Detail Screen,Save/unsave button + logic,Dev 4,2,"0.4, 3.1",P0
+4,My Recipes Screen,,Dev 5,,,P0
+4.1,My Recipes Screen,Layout dengan tabs (Published/Draft),Dev 5,2,2.1,P0
+4.2,My Recipes Screen,Filter recipes by authorId,Dev 5,2,"0.4, 4.1",P0
+4.3,My Recipes Screen,Empty state component,Dev 5,2,4.1,P1
+4.4,My Recipes Screen,Edit & delete actions,Dev 5,2,4.1,P1
+5,Saved Recipes Screen,,Dev 6,,,P0
+5.1,Saved Recipes Screen,Layout dengan FlatList,Dev 6,2,2.1,P0
+5.2,Saved Recipes Screen,Filter by savedRecipeIds,Dev 6,2,"0.4, 5.1",P0
+5.3,Saved Recipes Screen,Empty state (belum ada saved),Dev 6,1,5.1,P1
+6,Create/Edit Recipe Screen,,Dev 7,,,P0
+6.1,Create/Edit Recipe Screen,"Form UI: title, description, category",Dev 7,3,0.3,P0
+6.2,Create/Edit Recipe Screen,Time & difficulty inputs,Dev 7,2,6.1,P0
+6.3,Create/Edit Recipe Screen,Image picker integration,Dev 7,3,"0.1, 6.1",P0
+6.4,Create/Edit Recipe Screen,Dynamic ingredients (add/remove),Dev 7,3,6.1,P0
+6.5,Create/Edit Recipe Screen,Dynamic steps (add/remove),Dev 7,3,6.1,P0
+6.6,Create/Edit Recipe Screen,Privacy toggle (Switch),Dev 7,1,6.1,P0
+6.7,Create/Edit Recipe Screen,Save logic (Draft/Published),Dev 7,2,"0.4, 6.1",P0
+7,Profile Screen,,Dev 2,,,P0
+7.1,Profile Screen,"UI: avatar, name, bio display",Dev 2,2,"0.3, 1.2",P0
+7.2,Profile Screen,Edit profile form,Dev 2,3,7.1,P1
+7.3,Profile Screen,Logout button + logic,Dev 2,1,"0.4, 7.1",P0
+R,Code Review,,Reviewer,,,P0
+R.1,Code Review,Review: Setup & types,Reviewer,1,0.5,P0
+R.2,Code Review,Review: Login screen,Reviewer,1,1.3,P0
+R.3,Code Review,Review: Home screen,Reviewer,2,2.5,P0
+R.4,Code Review,Review: Recipe detail,Reviewer,1,3.4,P0
+R.5,Code Review,Review: My recipes,Reviewer,1,4.4,P0
+R.6,Code Review,Review: Saved recipes,Reviewer,1,5.3,P0
+R.7,Code Review,Review: Create/edit recipe,Reviewer,2,6.7,P0
+R.8,Code Review,Review: Profile screen,Reviewer,1,7.3,P0
+R.9,Code Review,Final integration review,Reviewer,2,All reviews,P1
+Q,QA Testing,,QA,,,P0
+Q.1,QA Testing,Test plan & setup environment,QA,2,0.2,P0
+Q.2,QA Testing,Test: Login screen,QA,2,R.2,P0
+Q.3,QA Testing,"Test: Home screen (search, filter)",QA,3,R.3,P0
+Q.4,QA Testing,"Test: Recipe detail (view, save)",QA,2,R.4,P0
+Q.5,QA Testing,"Test: My recipes (tabs, actions)",QA,2,R.5,P0
+Q.6,QA Testing,Test: Saved recipes,QA,2,R.6,P0
+Q.7,QA Testing,"Test: Create/edit (form, validation)",QA,4,R.7,P0
+Q.8,QA Testing,"Test: Profile (view, edit, logout)",QA,2,R.8,P0
+Q.9,QA Testing,Test: Navigation flow end-to-end,QA,2,Q.8,P0
+Q.10,QA Testing,Test: Data persistence,QA,2,Q.9,P0
+Q.11,QA Testing,Bug reporting & retesting,QA,4,Q.10,P1
+Q.12,QA Testing,Final acceptance test,QA,2,Q.11,P1
+B,Bug Fixes,,All Devs,,,P1
+B.1,Bug Fixes,Fix bugs: Login screen,Dev 2,2,Q.11,P1
+B.2,Bug Fixes,Fix bugs: Home screen,Dev 3,2,Q.11,P1
+B.3,Bug Fixes,Fix bugs: Recipe detail,Dev 4,1,Q.11,P1
+B.4,Bug Fixes,Fix bugs: My recipes,Dev 5,1,Q.11,P1
+B.5,Bug Fixes,Fix bugs: Saved recipes,Dev 6,1,Q.11,P1
+B.6,Bug Fixes,Fix bugs: Create/edit recipe,Dev 7,3,Q.11,P1
+B.7,Bug Fixes,Fix bugs: Profile screen,Dev 2,1,Q.11,P1

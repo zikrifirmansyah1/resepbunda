@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Resep Bunda - Aplikasi Resep Keluarga</title>
+    
+    <!-- Libraries -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/history@5/umd/history.development.js"></script>
+    <script src="https://unpkg.com/react-router@6.3.0/umd/react-router.development.js"></script>
+    <script src="https://unpkg.com/react-router-dom@6.3.0/umd/react-router-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    
+    <!-- Styles & Fonts -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <!-- Tailwind Config -->
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class", 
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#059669", 
+                        "primary-dark": "#0ea64d", 
+                        "background-light": "#f5f8f7", 
+                        "background-dark": "#0f231d", 
+                        "surface-light": "#ffffff", 
+                        "surface-dark": "#1a3326",
+                        "card-light": "#ffffff", 
+                        "card-dark": "#1a2c22",
+                        "text-main-light": "#0d1b13", 
+                        "text-main-dark": "#e0e7e3", 
+                        "text-muted-light": "#4c9a6c", 
+                        "text-muted-dark": "#8abf9e"
+                    }, 
+                    fontFamily: {
+                        display: "Plus Jakarta Sans",
+                        body: ["Noto Sans", "sans-serif"]
+                    }, 
+                    borderRadius: {
+                        DEFAULT: "0.5rem", 
+                        lg: "1rem", 
+                        xl: "1.5rem", 
+                        full: "9999px"
+                    }, 
+                    boxShadow: {
+                        soft: "0 4px 20px -2px rgba(0, 0, 0, 0.05)"
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        /* Shared Styles */
+        body {
+            min-height: max(884px, 100dvh);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white transition-colors duration-200">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { createRoot } = ReactDOM;
+        const { MemoryRouter, Routes, Route, Link, useNavigate, useLocation } = ReactRouterDOM;
+
+        // --- Shared Components ---
+
+        const BottomNav = ({ active }) => {
+            const navigate = useNavigate();
+            
+            const navItems = [
+                { icon: 'home', label: 'Beranda', path: '/home', id: 'home' },
+                { icon: 'search', label: 'Cari', path: '/filter', id: 'search' }, // Using search icon/label for filter screen based on mockup variation, or could be My Recipes
+                { icon: 'add', label: 'Buat', path: '/add-recipe', id: 'add', isFloating: true },
+                { icon: 'bookmark', label: 'Disimpan', path: '/saved', id: 'saved' },
+                { icon: 'person', label: 'Profil', path: '/profile', id: 'profile' },
+            ];
+            
+            // Note: Screen 2 uses 'menu_book' for My Recipes in the 2nd slot. Screen 8 uses 'search' for Cari.
+            // I will implement a hybrid nav that adapts based on the "active" prop or just standardize.
+            // Let's standardize to the most common layout seen in Screen 2, 3, 4, 9, but swap 'search' in slot 2 if needed.
+            
+            return (
+                <div className="fixed bottom-0 left-0 w-full bg-white dark:bg-card-dark border-t border-slate-100 dark:border-slate-800 pb-5 pt-2 px-6 z-50">
+                    <div className="flex justify-between items-center max-w-md mx-auto">
+                        <Link to="/home" className={`flex flex-col items-center gap-1 p-2 transition-colors ${active === 'home' ? 'text-primary' : 'text-slate-400 dark:text-slate-500 hover:text-primary'}`}>
+                            <span className={`material-symbols-outlined ${active === 'home' ? 'filled' : ''}`} style={{fontSize: '26px'}}>home</span>
+                            <span className={`text-[10px] ${active === 'home' ? 'font-bold' : 'font-medium'}`}>Beranda</span>
+                        </Link>
+
+                        <Link to="/my-recipes" className={`flex flex-col items-center gap-1 p-2 transition-colors ${active === 'my-recipes' ? 'text-primary' : 'text-slate-400 dark:text-slate-500 hover:text-primary'}`}>
+                            <span className={`material-symbols-outlined ${active === 'my-recipes' ? 'filled' : ''}`} style={{fontSize: '26px'}}>menu_book</span>
+                            <span className={`text-[10px] ${active === 'my-recipes' ? 'font-bold' : 'font-medium'}`}>My Recipes</span>
+                        </Link>
+
+                        <Link to="/add-recipe" className="relative -top-6 bg-primary text-slate-900 rounded-full p-4 shadow-lg shadow-primary/40 transform hover:scale-105 transition-transform flex items-center justify-center">
+                            <span className="material-symbols-outlined" style={{fontSize: '28px'}}>add</span>
+                        </Link>
+
+                        <Link to="/saved" className={`flex flex-col items-center gap-1 p-2 transition-colors ${active === 'saved' ? 'text-primary' : 'text-slate-400 dark:text-slate-500 hover:text-primary'}`}>
+                            <span className={`material-symbols-outlined ${active === 'saved' ? 'filled' : ''}`} style={{fontSize: '26px'}}>bookmark</span>
+                            <span className={`text-[10px] ${active === 'saved' ? 'font-bold' : 'font-medium'}`}>Disimpan</span>
+                        </Link>
+
+                        <Link to="/profile" className={`flex flex-col items-center gap-1 p-2 transition-colors ${active === 'profile' ? 'text-primary' : 'text-slate-400 dark:text-slate-500 hover:text-primary'}`}>
+                            <span className={`material-symbols-outlined ${active === 'profile' ? 'filled' : ''}`} style={{fontSize: '26px'}}>person</span>
+                            <span className={`text-[10px] ${active === 'profile' ? 'font-bold' : 'font-medium'}`}>Profil</span>
+                        </Link>
+                    </div>
+                </div>
+            );
+        };
+
+        const RecipeCard = ({ title, desc, author, time, tag, image, isSaved, showStats, onClick }) => (
+            <div onClick={onClick} className="group flex items-start p-3 bg-white dark:bg-card-dark rounded-xl shadow-soft border border-slate-100 dark:border-slate-800 gap-4 cursor-pointer active:scale-[0.99] transition-transform">
+                <div className="w-24 h-24 shrink-0 rounded-lg overflow-hidden bg-slate-100 relative">
+                    <div className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" style={{backgroundImage: `url("${image}")`}}></div>
+                </div>
+                <div className="flex flex-col flex-1 justify-center py-0.5 min-h-[6rem]">
+                    <h3 className="font-bold text-slate-900 dark:text-white text-base mb-1 leading-tight">{title}</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1 leading-relaxed line-clamp-2">{desc}</p>
+                    <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-2 block">Oleh {author}</span>
+                    <div className="flex items-center gap-3 text-slate-500 dark:text-slate-400 mt-auto">
+                        <div className="flex items-center gap-1">
+                            <span className="material-symbols-outlined" style={{fontSize: '16px'}}>schedule</span>
+                            <span className="text-xs font-medium">{time}</span>
+                        </div>
+                        <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                        <span className="text-xs font-medium">{tag}</span>
+                        {showStats && (
+                             <div className="flex items-center gap-1 ml-auto">
+                                <span className="material-symbols-outlined text-yellow-400 filled" style={{fontSize: '16px'}}>star</span>
+                                <span className="text-xs font-medium">4.9</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+
+
+        // --- Screens ---
+
+        // Screen 1: Tambah Resep
+        const AddRecipeScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden pb-24 bg-background-light dark:bg-background-dark">
+                    <div className="sticky top-0 z-50 flex items-center bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm p-4 pb-2 justify-between border-b border-gray-200 dark:border-gray-800">
+                        <button onClick={() => navigate(-1)} className="text-slate-900 dark:text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors">
+                            <span className="material-symbols-outlined">arrow_back_ios_new</span>
+                        </button>
+                        <h2 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Tulis Resep</h2>
+                        <div className="size-10 shrink-0"></div>
+                    </div>
+                    <div className="flex flex-col gap-6 px-4 py-6">
+                        <div className="flex flex-col gap-2">
+                            <p className="text-slate-900 dark:text-white text-base font-bold leading-normal">Foto Masakan</p>
+                            <label className="flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 bg-surface-light dark:bg-surface-dark hover:bg-gray-50 dark:hover:bg-surface-dark/80 transition-all h-52 relative group overflow-hidden">
+                                <div className="flex flex-col items-center justify-center pb-6 pt-5 z-10">
+                                    <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary-dark dark:text-primary group-hover:scale-110 transition-transform duration-300">
+                                        <span className="material-symbols-outlined text-2xl">add_a_photo</span>
+                                    </div>
+                                    <p className="mb-1 text-sm font-semibold text-slate-900 dark:text-white">Tambahkan Foto</p>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400">JPG, PNG maks. 5MB</p>
+                                </div>
+                                <input accept="image/*" className="hidden" type="file"/>
+                            </label>
+                        </div>
+                        <div className="flex flex-col gap-4">
+                            <label className="flex flex-col w-full">
+                                <p className="text-slate-900 dark:text-white text-base font-bold leading-normal pb-2">Judul Resep</p>
+                                <input className="form-input w-full rounded-xl border-none bg-surface-light dark:bg-surface-dark focus:ring-2 focus:ring-primary h-14 placeholder:text-slate-400 dark:placeholder:text-slate-500 p-4 text-base font-normal leading-normal shadow-sm" placeholder="Contoh: Sop Ayam Jahe"/>
+                            </label>
+                            <label className="flex flex-col w-full">
+                                <p className="text-slate-900 dark:text-white text-base font-bold leading-normal pb-2">Estimasi Durasi</p>
+                                <div className="relative">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-xl">schedule</span>
+                                    <input className="form-input w-full rounded-xl border-none bg-surface-light dark:bg-surface-dark focus:ring-2 focus:ring-primary h-14 placeholder:text-slate-400 dark:placeholder:text-slate-500 pl-12 pr-16 text-base font-normal leading-normal shadow-sm" placeholder="45" type="number"/>
+                                    <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                                        <span className="text-slate-500 dark:text-slate-400 font-medium text-sm">Menit</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        {/* Ingredients */}
+                        <div className="flex flex-col gap-4">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-slate-900 dark:text-white text-lg font-bold">Bahan-bahan</h3>
+                                <span className="text-xs text-slate-500 font-medium">Geser untuk hapus</span>
+                            </div>
+                            <div className="flex flex-col gap-3">
+                                <div className="flex gap-3">
+                                    <div className="w-1/4">
+                                        <input className="form-input w-full rounded-xl border-none bg-surface-light dark:bg-surface-dark focus:ring-2 focus:ring-primary h-12 px-3 text-center text-base font-normal shadow-sm" placeholder="1 sdm" defaultValue="500 gr"/>
+                                    </div>
+                                    <div className="flex-1">
+                                        <input className="form-input w-full rounded-xl border-none bg-surface-light dark:bg-surface-dark focus:ring-2 focus:ring-primary h-12 px-4 text-base font-normal shadow-sm" placeholder="Nama bahan" defaultValue="Dada Ayam"/>
+                                    </div>
+                                    <button className="flex items-center justify-center text-slate-400 hover:text-red-500">
+                                        <span className="material-symbols-outlined">remove_circle_outline</span>
+                                    </button>
+                                </div>
+                                <div className="flex gap-3">
+                                    <div className="w-1/4">
+                                        <input className="form-input w-full rounded-xl border-none bg-surface-light dark:bg-surface-dark focus:ring-2 focus:ring-primary h-12 px-3 text-center text-base font-normal shadow-sm" placeholder="Qty" defaultValue="2 siung"/>
+                                    </div>
+                                    <div className="flex-1">
+                                        <input className="form-input w-full rounded-xl border-none bg-surface-light dark:bg-surface-dark focus:ring-2 focus:ring-primary h-12 px-4 text-base font-normal shadow-sm" placeholder="Nama bahan" defaultValue="Bawang Putih"/>
+                                    </div>
+                                    <button className="flex items-center justify-center text-slate-400 hover:text-red-500">
+                                        <span className="material-symbols-outlined">remove_circle_outline</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <button className="flex items-center justify-center gap-2 rounded-xl bg-primary/10 dark:bg-primary/5 py-3 text-primary-dark dark:text-primary font-bold hover:bg-primary/20 transition-colors">
+                                <span className="material-symbols-outlined text-xl">add</span>
+                                Tambah Bahan
+                            </button>
+                        </div>
+                        <hr className="border-gray-200 dark:border-gray-800 my-2"/>
+                        
+                        <div className="flex flex-col gap-4">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-slate-900 dark:text-white text-lg font-bold">Langkah Pembuatan</h3>
+                            </div>
+                            <div className="flex flex-col gap-4">
+                                <div className="flex gap-3 items-start group">
+                                    <div className="flex flex-col items-center gap-2 pt-2">
+                                        <div className="flex size-6 items-center justify-center rounded-full bg-primary text-slate-900 text-xs font-bold">1</div>
+                                        <span className="material-symbols-outlined text-slate-300 cursor-grab active:cursor-grabbing text-lg">drag_indicator</span>
+                                    </div>
+                                    <div className="flex-1">
+                                        <textarea className="form-input w-full resize-none rounded-xl border-none bg-surface-light dark:bg-surface-dark focus:ring-2 focus:ring-primary min-h-24 p-3 text-base font-normal leading-normal shadow-sm" placeholder="Jelaskan langkah ini..." defaultValue="Potong dada ayam menjadi dadu kecil-kecil sesuai selera."></textarea>
+                                    </div>
+                                </div>
+                                <div className="flex gap-3 items-start group">
+                                    <div className="flex flex-col items-center gap-2 pt-2">
+                                        <div className="flex size-6 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold">2</div>
+                                        <span className="material-symbols-outlined text-slate-300 cursor-grab active:cursor-grabbing text-lg">drag_indicator</span>
+                                    </div>
+                                    <div className="flex-1">
+                                        <textarea className="form-input w-full resize-none rounded-xl border-none bg-surface-light dark:bg-surface-dark focus:ring-2 focus:ring-primary min-h-24 p-3 text-base font-normal leading-normal shadow-sm" placeholder="Jelaskan langkah ini..." defaultValue="Tumis bawang putih hingga harum, lalu masukkan ayam."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <button className="flex items-center justify-center gap-2 rounded-xl bg-primary/10 dark:bg-primary/5 py-3 text-primary-dark dark:text-primary font-bold hover:bg-primary/20 transition-colors">
+                                <span className="material-symbols-outlined text-xl">add</span>
+                                Tambah Langkah
+                            </button>
+                        </div>
+                        <hr className="border-gray-200 dark:border-gray-800 my-2"/>
+                        <div className="flex flex-col gap-3">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-slate-900 dark:text-white text-lg font-bold">Status Resep</h3>
+                            </div>
+                            <div className="flex items-center justify-between bg-surface-light dark:bg-surface-dark p-4 rounded-xl shadow-sm">
+                                <div className="flex flex-col">
+                                    <span className="text-slate-900 dark:text-white font-semibold text-base">Publikasikan ke Komunitas</span>
+                                    <span className="text-slate-500 dark:text-slate-400 text-sm mt-0.5">Orang lain dapat melihat resep ini</span>
+                                </div>
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" className="sr-only peer" defaultChecked/>
+                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/30 dark:peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div className="h-10"></div>
+                    </div>
+                    <div className="fixed bottom-0 left-0 w-full bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-4 border-t border-gray-200 dark:border-gray-800 z-40">
+                        <button className="w-full rounded-xl bg-primary h-14 text-slate-900 text-lg font-bold shadow-lg shadow-primary/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                            <span className="material-symbols-outlined">save</span>
+                            Simpan Resep
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        // Screen 2, 5, 8: Beranda & Cari Resep (Unified)
+        const HomeScreen = () => {
+            const navigate = useNavigate();
+            const location = useLocation();
+            const isFilterOpen = location.pathname === '/filter';
+
+            return (
+                <div className="bg-background-light dark:bg-background-dark min-h-screen relative overflow-hidden">
+                     {/* Filter Modal Overlay (Screen 8 Logic) */}
+                    {isFilterOpen && (
+                        <div className="fixed inset-0 z-[60] flex flex-col bg-background-light dark:bg-background-dark animate-fade-in">
+                            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-card-dark">
+                                <button onClick={() => navigate('/home')} className="p-2 -ml-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-white">
+                                    <span className="material-symbols-outlined" style={{fontSize: '24px'}}>close</span>
+                                </button>
+                                <h2 className="text-lg font-bold text-slate-900 dark:text-white">Filter</h2>
+                                <div className="w-10"></div>
+                            </div>
+                            <div className="flex-1 overflow-y-auto no-scrollbar">
+                                <div className="px-5 py-6 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-card-dark">
+                                    <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">Rentang Waktu</h3>
+                                    <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                                        <button className="shrink-0 px-4 py-2 bg-primary/10 text-primary-dark border border-primary text-sm font-semibold rounded-full whitespace-nowrap">Semua Waktu</button>
+                                        <button className="shrink-0 px-4 py-2 bg-white dark:bg-card-dark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-sm font-semibold rounded-full whitespace-nowrap hover:border-primary/50">Hari Ini</button>
+                                        <button className="shrink-0 px-4 py-2 bg-white dark:bg-card-dark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-sm font-semibold rounded-full whitespace-nowrap hover:border-primary/50">Minggu Ini</button>
+                                    </div>
+                                </div>
+                                <div className="bg-white dark:bg-card-dark mt-2">
+                                    <h3 className="px-5 pt-6 pb-2 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Filter Berdasarkan</h3>
+                                    <div className="flex flex-col">
+                                        {['Kategori', 'Durasi Memasak', 'Tingkat Kesulitan', 'Kalori'].map((item) => (
+                                            <button key={item} className="flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 active:bg-slate-100 transition-colors border-b border-slate-50 dark:border-slate-800/50">
+                                                <div className="flex flex-col items-start text-left">
+                                                    <span className="text-base font-semibold text-slate-900 dark:text-white">{item}</span>
+                                                    <span className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Semua {item}</span>
+                                                </div>
+                                                <span className="material-symbols-outlined text-slate-400" style={{fontSize: '20px'}}>chevron_right</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="p-5 bg-white dark:bg-card-dark border-t border-slate-100 dark:border-slate-800 pb-8">
+                                <div className="flex items-center justify-between gap-4">
+                                    <button className="text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-4 py-3">Hapus Semua</button>
+                                    <button onClick={() => navigate('/home')} className="flex-1 bg-primary text-slate-900 text-sm font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-[0.98] transition-all">Tampilkan Resep</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Main Header */}
+                    <div className="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md transition-colors duration-300 border-b border-transparent dark:border-slate-800">
+                        <div className="flex items-center px-5 py-4 justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="relative group cursor-pointer" onClick={() => navigate('/profile')}>
+                                    <div className="bg-center bg-no-repeat bg-cover rounded-full size-10 ring-2 ring-white dark:ring-background-dark shadow-sm" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDdz9rB7EJTMIfkukwcsVx1kbBJ1l0c-LrZXj9-2sbju3dWibb5OG-N1Xeu2SVaWrZC8vKD_Xo7G_T7W_4EXEax9656sP0454NJMDW8iPCdnno7pf7KfNb0gKnlBEn0aa-SjVcgrdiAdIaxXhS0Yix0Nd-zs06QZWkEtV7I2HH_WEfW9hLrCePIegnduz5adYw3qa_FC1B0t6GIdwewpanX9sx7zSlOR4sMPAMuBa5dmi9dRY2oMG12NF9X_jaE2UD9_CREvOd9-zVo")'}}></div>
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Selamat Pagi,</span>
+                                    <h2 className="text-slate-900 dark:text-white text-base font-bold leading-tight tracking-tight">Bunda Sarah</h2>
+                                </div>
+                            </div>
+                            <button className="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                                <span className="material-symbols-outlined text-slate-900 dark:text-white" style={{fontSize: '24px'}}>notifications</span>
+                                <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-background-dark"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-6 pt-2 pb-24">
+                        <div className="px-5 flex gap-3">
+                            <label className="flex flex-col flex-1 group">
+                                <div className="flex w-full items-center rounded-xl h-12 bg-white dark:bg-card-dark shadow-sm border border-slate-200 dark:border-slate-800 transition-all focus-within:ring-2 focus-within:ring-primary/50 focus-within:border-primary">
+                                    <div className="flex items-center justify-center pl-4 pr-3 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
+                                        <span className="material-symbols-outlined" style={{fontSize: '20px'}}>search</span>
+                                    </div>
+                                    <input className="flex w-full bg-transparent border-none text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-0 text-sm font-medium h-full rounded-r-xl pr-4" placeholder="Cari resep..." />
+                                </div>
+                            </label>
+                            <button onClick={() => navigate('/filter')} className="shrink-0 flex items-center justify-center w-12 h-12 rounded-xl bg-white dark:bg-card-dark shadow-sm border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white hover:border-primary hover:text-primary active:scale-95 transition-all">
+                                <span className="material-symbols-outlined" style={{fontSize: '24px'}}>tune</span>
+                            </button>
+                        </div>
+
+                        <div className="flex overflow-x-auto no-scrollbar gap-3 px-5 pb-2">
+                            <button className="shrink-0 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold rounded-full shadow-md whitespace-nowrap">Semua</button>
+                            {['Sarapan', 'Makan Siang', 'Makan Malam', 'MPASI', 'Camilan'].map(cat => (
+                                <button key={cat} className="shrink-0 px-4 py-2 bg-white dark:bg-card-dark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-semibold rounded-full whitespace-nowrap hover:border-primary/50 transition-colors">{cat}</button>
+                            ))}
+                        </div>
+
+                        <div className="px-5 flex flex-col gap-4">
+                            <RecipeCard 
+                                title="Sop Iga Sapi Spesial" 
+                                desc="Kuah kaldu bening gurih dengan daging iga empuk, pas untuk hangatkan suasana makan malam keluarga." 
+                                author="Dapur Bunda Rara"
+                                time="45 mnt"
+                                tag="Makan Malam"
+                                image="https://lh3.googleusercontent.com/aida-public/AB6AXuDZQViMpgqlHq0ZVqqJGwAxn5YUOWDJIqdklALQRIw5o4u7JQZowg9oFhG4U5CSmEpq7a1UWPWjuoLfqk9J982t4upvDjbmdZv0YkwgFX1qr3YcxZ9sJuEVyNulXtsPsW9-g0yoRX8HPutClgx5YLP5G0OsQFlDZzrgivBXoeLBFSz0hYIihXbW85LGs-rYbCZE28NCqlPBd9Obzd3RP3J_4B73x28-Tvv53oULq3Pz8MIceg2M5UqVwSggGWXefpLjJbxwZhdKgV-V"
+                                onClick={() => navigate('/detail')}
+                            />
+                            <RecipeCard 
+                                title="Salmon Teriyaki Sehat" 
+                                desc="Kaya omega-3 dengan saus teriyaki manis gurih buatan sendiri." 
+                                author="Chef Arnold"
+                                time="20 mnt"
+                                tag="Makan Siang"
+                                image="https://lh3.googleusercontent.com/aida-public/AB6AXuBAU-ICpdIwEXam8JX8OkcTYE2qMM3PoN-Q6lzF0JwpyNfjQ7eiagZwTA_7RkUCcg6s3MwZml-L5D0BImke_rfV9x65dlYT2XMmqMvbPpeRn9NRty4v82Ebf5aQuPbHvD8KwxJXMcTQRulh4c3kPPFm1LiyhErNhIzrDpL4TP10OSXtG2tBUfmRi-f0xX5-R7v9coAwS12m6mJJ6f2Uccj2jui7jGGOMGeqsbqx8yhaXKVaLdKk8nC7Np4Cd9B0ksPj-x2E6LBzryd4"
+                                onClick={() => navigate('/detail')}
+                            />
+                             <RecipeCard 
+                                title="Puding Mangga Susu" 
+                                desc="Dessert lembut dan manis alami dari mangga harum manis pilihan." 
+                                author="Mama Suka Masak"
+                                time="60 mnt"
+                                tag="Camilan"
+                                image="https://lh3.googleusercontent.com/aida-public/AB6AXuBMQxolKlYsS9sR7f9I1-HLW8dAkzzpEeTjqjA9LxgwQo0KDiDcB3WZ-0nF7TyUEkMFIo0SXf3ZB1OfzLnZZcV1f5yyBJKGMAFofbUpQAUvdhZ6qpK8pGDwjuqQQ99h0gPhCBtv_V9jttWY3HvdXECFS5kROouSB7boAzclXnKmPzU4riId9uuTQT39yLXiad1h9HrbbfEz-Kr47g04wJgEFdpr2EeAxEJofAj1avt0b5JUITvSuJ-zzax7mVI7Hf2-z71igDBBJXmJ"
+                                onClick={() => navigate('/detail')}
+                            />
+                             <RecipeCard 
+                                title="Nasi Goreng Kampung" 
+                                desc="Sarapan praktis 15 menit dengan bumbu tradisional dan telur mata sapi." 
+                                author="Warung Sebelah"
+                                time="15 mnt"
+                                tag="Sarapan"
+                                image="https://lh3.googleusercontent.com/aida-public/AB6AXuCuda5Bmgm-d92mcryF0BvnfNcvNi-WoIyW6KzwURg7BCaxdZpPqsTI5QMNhERKAKDAqRG9XRHjgUBQuRKFTvn3MY2wKmhdmPvi_TNOJq-spT1P3ijwu9MwZfb7tg8H8pvjPnLJrcISjVjBY9m6TyH95_plByp44oQ6VLfPAUXRuYRnRe5c0vuHad3Q5n2ppC9EGCZ4lzHjo6PeKSOluiEOIAXw4Hl3wcLgnFdqreJysEmQ1oXGpJ6RQscR7AguirtArl3amUAZ_96F"
+                                onClick={() => navigate('/detail')}
+                            />
+                        </div>
+                    </div>
+                    <BottomNav active="home" />
+                </div>
+            );
+        };
+
+        // Screen 3: My Recipes
+        const MyRecipesScreen = () => {
+             return (
+                <div className="bg-background-light dark:bg-background-dark min-h-screen relative overflow-hidden pb-24">
+                     <div className="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md transition-colors duration-300 border-b border-transparent dark:border-slate-800">
+                        <div className="flex items-center px-5 py-4 justify-between">
+                            <div className="flex flex-col">
+                                <h2 className="text-slate-900 dark:text-white text-2xl font-bold leading-tight tracking-tight">My Recipes</h2>
+                                <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">Kelola resep buatanmu</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button className="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                                    <span className="material-symbols-outlined text-slate-900 dark:text-white" style={{fontSize: '24px'}}>search</span>
+                                </button>
+                                <button className="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                                    <span className="material-symbols-outlined text-slate-900 dark:text-white" style={{fontSize: '24px'}}>settings</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="flex flex-col gap-6 pt-2">
+                        <div className="flex overflow-x-auto no-scrollbar gap-2 px-5 pb-2">
+                            <button className="shrink-0 px-5 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold rounded-full shadow-md whitespace-nowrap">Semua</button>
+                            <button className="shrink-0 px-5 py-2.5 bg-white dark:bg-card-dark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-sm font-semibold rounded-full whitespace-nowrap hover:border-primary/50 hover:text-primary transition-all">Terbit</button>
+                            <button className="shrink-0 px-5 py-2.5 bg-white dark:bg-card-dark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-sm font-semibold rounded-full whitespace-nowrap hover:border-primary/50 hover:text-primary transition-all">Draf</button>
+                        </div>
+                        <div className="px-5 flex flex-col gap-4">
+                            {/* Card 1 */}
+                            <div className="group flex items-center p-3 bg-white dark:bg-card-dark rounded-xl shadow-soft border border-slate-100 dark:border-slate-800 gap-4 cursor-pointer active:scale-[0.99] transition-transform">
+                                <div className="w-20 h-20 shrink-0 rounded-lg overflow-hidden bg-slate-100 relative shadow-sm self-start mt-1">
+                                    <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDZQViMpgqlHq0ZVqqJGwAxn5YUOWDJIqdklALQRIw5o4u7JQZowg9oFhG4U5CSmEpq7a1UWPWjuoLfqk9J982t4upvDjbmdZv0YkwgFX1qr3YcxZ9sJuEVyNulXtsPsW9-g0yoRX8HPutClgx5YLP5G0OsQFlDZzrgivBXoeLBFSz0hYIihXbW85LGs-rYbCZE28NCqlPBd9Obzd3RP3J_4B73x28-Tvv53oULq3Pz8MIceg2M5UqVwSggGWXefpLjJbxwZhdKgV-V")'}}></div>
+                                </div>
+                                <div className="flex flex-col flex-1 h-full justify-center">
+                                    <div className="flex justify-between items-start mb-1">
+                                        <h3 className="font-bold text-slate-900 dark:text-white text-base leading-tight pr-2">Sop Iga Sapi Spesial</h3>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-2">
+                                        <span className="text-xs">Dibuat 2 hari lalu</span>
+                                        <span className="w-0.5 h-0.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                        <span className="text-xs font-medium text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-md">Terbit</span>
+                                    </div>
+                                    <div className="flex items-center justify-between mt-1 pt-2 border-t border-slate-50 dark:border-slate-800">
+                                        <div className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
+                                            <span className="material-symbols-outlined" style={{fontSize: '16px'}}>schedule</span>
+                                            <span className="text-xs font-medium">45 mnt</span>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-primary hover:text-slate-900 transition-colors">
+                                                <span className="material-symbols-outlined" style={{fontSize: '18px'}}>edit</span>
+                                            </button>
+                                            <button className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 transition-colors">
+                                                <span className="material-symbols-outlined" style={{fontSize: '18px'}}>delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             {/* Card 2 */}
+                             <div className="group flex items-center p-3 bg-white dark:bg-card-dark rounded-xl shadow-soft border border-slate-100 dark:border-slate-800 gap-4 cursor-pointer active:scale-[0.99] transition-transform">
+                                <div className="w-20 h-20 shrink-0 rounded-lg overflow-hidden bg-slate-100 relative shadow-sm self-start mt-1">
+                                    <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBAU-ICpdIwEXam8JX8OkcTYE2qMM3PoN-Q6lzF0JwpyNfjQ7eiagZwTA_7RkUCcg6s3MwZml-L5D0BImke_rfV9x65dlYT2XMmqMvbPpeRn9NRty4v82Ebf5aQuPbHvD8KwxJXMcTQRulh4c3kPPFm1LiyhErNhIzrDpL4TP10OSXtG2tBUfmRi-f0xX5-R7v9coAwS12m6mJJ6f2Uccj2jui7jGGOMGeqsbqx8yhaXKVaLdKk8nC7Np4Cd9B0ksPj-x2E6LBzryd4")'}}></div>
+                                </div>
+                                <div className="flex flex-col flex-1 h-full justify-center">
+                                    <div className="flex justify-between items-start mb-1">
+                                        <h3 className="font-bold text-slate-900 dark:text-white text-base leading-tight pr-2">Salmon Teriyaki</h3>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-2">
+                                        <span className="text-xs">Dibuat 1 minggu lalu</span>
+                                        <span className="w-0.5 h-0.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                        <span className="text-xs font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">Draf</span>
+                                    </div>
+                                    <div className="flex items-center justify-between mt-1 pt-2 border-t border-slate-50 dark:border-slate-800">
+                                        <div className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
+                                            <span className="material-symbols-outlined" style={{fontSize: '16px'}}>schedule</span>
+                                            <span className="text-xs font-medium">20 mnt</span>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-primary hover:text-slate-900 transition-colors">
+                                                <span className="material-symbols-outlined" style={{fontSize: '18px'}}>edit</span>
+                                            </button>
+                                            <button className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 transition-colors">
+                                                <span className="material-symbols-outlined" style={{fontSize: '18px'}}>delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <BottomNav active="my-recipes" />
+                </div>
+             )
+        };
+
+        // Screen 4: Saved Recipes
+        const SavedRecipesScreen = () => {
+             return (
+                <div className="bg-background-light dark:bg-background-dark min-h-screen relative overflow-hidden pb-24">
+                     <div className="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md transition-colors duration-300 border-b border-transparent dark:border-slate-800">
+                        <div className="flex items-center px-5 py-4 justify-between">
+                            <div className="flex flex-col">
+                                <h2 className="text-slate-900 dark:text-white text-2xl font-bold leading-tight tracking-tight">Saved Recipes</h2>
+                                <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1">Koleksi resep favoritmu</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button className="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                                    <span className="material-symbols-outlined text-slate-900 dark:text-white" style={{fontSize: '24px'}}>search</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="flex flex-col gap-6 pt-4">
+                        <div className="px-5 flex flex-col gap-4">
+                            {/* Saved Card 1 */}
+                            <div className="group flex items-center p-3 bg-white dark:bg-card-dark rounded-xl shadow-soft border border-slate-100 dark:border-slate-800 gap-4 cursor-pointer active:scale-[0.99] transition-transform">
+                                <div className="w-20 h-20 shrink-0 rounded-lg overflow-hidden bg-slate-100 relative shadow-sm">
+                                    <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDZQViMpgqlHq0ZVqqJGwAxn5YUOWDJIqdklALQRIw5o4u7JQZowg9oFhG4U5CSmEpq7a1UWPWjuoLfqk9J982t4upvDjbmdZv0YkwgFX1qr3YcxZ9sJuEVyNulXtsPsW9-g0yoRX8HPutClgx5YLP5G0OsQFlDZzrgivBXoeLBFSz0hYIihXbW85LGs-rYbCZE28NCqlPBd9Obzd3RP3J_4B73x28-Tvv53oULq3Pz8MIceg2M5UqVwSggGWXefpLjJbxwZhdKgV-V")'}}></div>
+                                </div>
+                                <div className="flex flex-col flex-1 h-full justify-center">
+                                    <div className="flex justify-between items-start mb-0.5">
+                                        <h3 className="font-bold text-slate-900 dark:text-white text-base leading-tight pr-2">Sop Iga Sapi Spesial</h3>
+                                    </div>
+                                    <div className="flex items-center gap-1 mb-1.5 text-slate-500 dark:text-slate-400">
+                                        <span className="material-symbols-outlined" style={{fontSize: '14px'}}>person</span>
+                                        <span className="text-xs">Oleh <span className="font-medium text-slate-700 dark:text-slate-300">Dapur Bunda</span></span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-2">
+                                        <span className="text-xs">Disimpan 2 hari lalu</span>
+                                        <span className="w-0.5 h-0.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                        <span className="text-xs font-medium text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/30 px-2 py-0.5 rounded-md">Favorit</span>
+                                    </div>
+                                </div>
+                            </div>
+                             {/* Saved Card 2 */}
+                             <div className="group flex items-center p-3 bg-white dark:bg-card-dark rounded-xl shadow-soft border border-slate-100 dark:border-slate-800 gap-4 cursor-pointer active:scale-[0.99] transition-transform">
+                                <div className="w-20 h-20 shrink-0 rounded-lg overflow-hidden bg-slate-100 relative shadow-sm">
+                                    <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBMQxolKlYsS9sR7f9I1-HLW8dAkzzpEeTjqjA9LxgwQo0KDiDcB3WZ-0nF7TyUEkMFIo0SXf3ZB1OfzLnZZcV1f5yyBJKGMAFofbUpQAUvdhZ6qpK8pGDwjuqQQ99h0gPhCBtv_V9jttWY3HvdXECFS5kROouSB7boAzclXnKmPzU4riId9uuTQT39yLXiad1h9HrbbfEz-Kr47g04wJgEFdpr2EeAxEJofAj1avt0b5JUITvSuJ-zzax7mVI7Hf2-z71igDBBJXmJ")'}}></div>
+                                </div>
+                                <div className="flex flex-col flex-1 h-full justify-center">
+                                    <div className="flex justify-between items-start mb-0.5">
+                                        <h3 className="font-bold text-slate-900 dark:text-white text-base leading-tight pr-2">Puding Mangga</h3>
+                                    </div>
+                                    <div className="flex items-center gap-1 mb-1.5 text-slate-500 dark:text-slate-400">
+                                        <span className="material-symbols-outlined" style={{fontSize: '14px'}}>person</span>
+                                        <span className="text-xs">Oleh <span className="font-medium text-slate-700 dark:text-slate-300">Mama Kitchen</span></span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-2">
+                                        <span className="text-xs">Disimpan kemarin</span>
+                                        <span className="w-0.5 h-0.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                        <span className="text-xs font-medium text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/30 px-2 py-0.5 rounded-md">Favorit</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <BottomNav active="saved" />
+                </div>
+             )
+        };
+
+        // Screen 6: Login
+        const LoginScreen = () => {
+            const navigate = useNavigate();
+            return (
+                <div className="relative flex h-auto min-h-screen w-full flex-col overflow-hidden max-w-md mx-auto bg-background-light dark:bg-background-dark shadow-2xl">
+                    <div className="flex items-center p-4 justify-between absolute top-0 left-0 right-0 z-10">
+                        <div onClick={() => navigate(-1)} className="bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-md rounded-full p-2 cursor-pointer shadow-sm hover:bg-white dark:hover:bg-surface-dark transition-colors">
+                            <span className="material-symbols-outlined text-text-main-light dark:text-text-main-dark">arrow_back</span>
+                        </div>
+                    </div>
+                    <div className="relative w-full h-[320px]">
+                        <div className="absolute inset-0 bg-cover bg-center rounded-b-[2.5rem]" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDH8LBRGxJnZs5MpM6-Dlfrnb8zZpn-Qd6gYvf02Sg49f7Lm_FChOvk9HpBSUEVUVkxx-j0sV363bp4FOQLD2ApDRPPlZelOJ_C3jyeEOjzfuVYrDZconVFk7H6FcqDRMgHj-qNyPTQDS9Es9lEgNWK1QjNcTNmcO0KFZcUWaDExHBQO5CsxSeTjE70ZujGh9CqgPItiiwilHmU5KpUjKihPGCZH79MTSmYyXFl1sMaSXpZg13UqR-bXAZiMRpfzPDtSgYS1fuIMctU")'}}>
+                            <div className="absolute inset-0 bg-gradient-to-t from-background-light dark:from-background-dark via-background-light/20 dark:via-background-dark/20 to-transparent rounded-b-[2.5rem]"></div>
+                        </div>
+                        <div className="absolute bottom-0 left-0 w-full px-6 pb-6 text-center">
+                            <h2 className="text-3xl font-bold tracking-tight mb-2 text-text-main-light dark:text-text-main-dark drop-shadow-sm">Mulai Masak Enak!</h2>
+                            <p className="text-text-muted-light dark:text-text-muted-dark text-base font-medium">Temukan ribuan resep sehat untuk keluarga.</p>
+                        </div>
+                    </div>
+                    <div className="flex-1 flex flex-col px-6 pt-8 pb-8 justify-between">
+                        <div className="w-full">
+                            <div className="space-y-5">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-semibold text-text-main-light dark:text-text-main-dark ml-1" htmlFor="email">Alamat Email</label>
+                                    <div className="relative">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted-light dark:text-text-muted-dark material-symbols-outlined">mail</span>
+                                        <input className="w-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-xl py-4 pl-12 pr-4 text-text-main-light dark:text-text-main-dark placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" id="email" placeholder="nama@email.com" type="email"/>
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-semibold text-text-main-light dark:text-text-main-dark ml-1" htmlFor="password">Kata Sandi</label>
+                                    <div className="relative">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted-light dark:text-text-muted-dark material-symbols-outlined">lock</span>
+                                        <input className="w-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-xl py-4 pl-12 pr-12 text-text-main-light dark:text-text-main-dark placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" id="password" placeholder="Masukan kata sandi" type="password"/>
+                                        <button className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                            <span className="material-symbols-outlined text-[20px]">visibility_off</span>
+                                        </button>
+                                    </div>
+                                    <div className="flex justify-end">
+                                        <a className="text-sm font-medium text-primary hover:text-primary-dark transition-colors" href="#">Lupa Kata Sandi?</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="mt-8 space-y-3">
+                                <button onClick={() => navigate('/home')} className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group">
+                                    <span>Masuk</span>
+                                    <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">login</span>
+                                </button>
+                                <button className="w-full bg-transparent border-2 border-primary/20 dark:border-gray-700 hover:border-primary dark:hover:border-primary text-primary dark:text-white dark:hover:text-primary font-bold py-4 rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                    <span>Daftar Akun Baru</span>
+                                </button>
+                            </div>
+                        </div>
+                        <p className="text-center text-xs text-text-muted-light dark:text-text-muted-dark mt-8 px-4 leading-relaxed opacity-80">
+                            Dengan melanjutkan, Anda menyetujui <a className="underline hover:text-primary" href="#">Syarat & Ketentuan</a> kami.
+                        </p>
+                    </div>
+                </div>
+            );
+        };
+
+        // Screen 7: Detail Resep
+        const DetailScreen = () => {
+             const navigate = useNavigate();
+             return (
+                <div className="relative flex min-h-screen w-full flex-col max-w-md mx-auto bg-surface-light dark:bg-surface-dark">
+                    <div className="px-6 pt-8 pb-4 flex items-center justify-between sticky top-0 bg-surface-light/95 dark:bg-surface-dark/95 backdrop-blur-sm z-20">
+                        <button onClick={() => navigate(-1)} className="flex items-center justify-center -ml-2 w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-text-primary-light dark:text-text-primary-dark">
+                            <span className="material-symbols-outlined text-[28px]">arrow_back</span>
+                        </button>
+                        <button className="flex items-center justify-center -mr-2 w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-text-primary-light dark:text-text-primary-dark">
+                            <span className="material-symbols-outlined text-[24px]">ios_share</span>
+                        </button>
+                    </div>
+                    <div className="px-6 pb-12 flex flex-col">
+                        <div className="w-full h-64 rounded-2xl overflow-hidden mb-6 relative shadow-lg">
+                            <img alt="Salmon Panggang Lemon" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvrCd9tJ7l_BTiNqXIFNW_5D_nId9PEjlO6vLSYDD5RVeUe0F53nmblcN9YlLciIE5OH8Z0-mg64Fo5DGFsZClTPaFlhPS6Puwy9DJzBzksmM27tbSc_uVpgD01d69BwJ3e-QCLgN1gEySKtO4eQJnjHhrI5CvJR5JVrIkAHeEuJona-YPmH8US-a-a6xGRRRFaWIa4qOHRqY-rjFteJL0aBOfzyoaZ9vaz1djr3rKw_nFlyzAOSfxctF69ENUifNfnFrNzbbCNoaC"/>
+                            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent"></div>
+                        </div>
+                        <div className="mb-8">
+                            <h1 className="text-3xl font-extrabold text-text-primary-light dark:text-text-primary-dark leading-tight mb-3">Salmon Panggang Lemon</h1>
+                            <div className="flex items-center justify-between">
+                                <p className="text-text-secondary-light dark:text-text-secondary-dark font-medium text-sm">Oleh Chef Amanda</p>
+                                <div className="flex items-center gap-1.5 px-3 py-1 bg-primary/10 rounded-full">
+                                    <span className="material-symbols-outlined text-primary text-lg">timer</span>
+                                    <span className="text-primary-dark dark:text-primary font-bold text-sm">20 Menit</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-full h-px bg-gray-100 dark:bg-gray-800 mb-8"></div>
+                        <div className="mb-10">
+                            <h2 className="text-lg font-bold text-text-primary-light dark:text-text-primary-dark uppercase tracking-wide mb-4">Bahan-bahan</h2>
+                            <ul className="flex flex-col gap-3">
+                                <li className="flex items-baseline gap-3 text-base">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0 translate-y-0.5"></span>
+                                    <span className="text-text-primary-light dark:text-text-primary-dark leading-relaxed"><span className="font-semibold">200g</span> Salmon Fillet</span>
+                                </li>
+                                <li className="flex items-baseline gap-3 text-base">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0 translate-y-0.5"></span>
+                                    <span className="text-text-primary-light dark:text-text-primary-dark leading-relaxed"><span className="font-semibold">1 buah</span> Lemon</span>
+                                </li>
+                                <li className="flex items-baseline gap-3 text-base">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0 translate-y-0.5"></span>
+                                    <span className="text-text-primary-light dark:text-text-primary-dark leading-relaxed"><span className="font-semibold">2 siung</span> Bawang Putih</span>
+                                </li>
+                                <li className="flex items-baseline gap-3 text-base">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0 translate-y-0.5"></span>
+                                    <span className="text-text-primary-light dark:text-text-primary-dark leading-relaxed"><span className="font-semibold">2 sdm</span> Minyak Zaitun</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div className="mb-8">
+                            <h2 className="text-lg font-bold text-text-primary-light dark:text-text-primary-dark uppercase tracking-wide mb-5">Cara Membuat</h2>
+                            <div className="flex flex-col gap-8">
+                                <div className="flex flex-col gap-1">
+                                    <h3 className="font-bold text-text-primary-light dark:text-text-primary-dark text-lg">1. Marinasi Salmon</h3>
+                                    <p className="text-text-secondary-light dark:text-text-secondary-dark leading-relaxed text-base">Lumuri salmon dengan air perasan lemon, bawang putih cincang, garam, dan lada.</p>
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <h3 className="font-bold text-text-primary-light dark:text-text-primary-dark text-lg">2. Panaskan Wajan</h3>
+                                    <p className="text-text-secondary-light dark:text-text-secondary-dark leading-relaxed text-base">Siapkan wajan anti lengket atau grill pan. Panaskan minyak zaitun dengan api sedang.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800">
+                            <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark italic text-center">"Memasak sederhana untuk keluarga bahagia."</p>
+                        </div>
+                    </div>
+                </div>
+             )
+        };
+
+        // Screen 9: Edit Profil
+        const ProfileScreen = () => {
+            const navigate = useNavigate();
+             return (
+                <div className="flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased overflow-x-hidden pb-24">
+                    <div className="sticky top-0 z-40 flex items-center justify-center bg-background-light/90 dark:bg-background-dark/90 px-4 py-3 backdrop-blur-md transition-colors border-b border-slate-200/50 dark:border-slate-800/50">
+                        <h2 className="text-lg font-bold leading-tight tracking-tight text-slate-900 dark:text-white">Edit Profil & Akun</h2>
+                    </div>
+                    <div className="w-full px-4 max-w-md mx-auto py-6">
+                        <div className="flex flex-col items-center mb-8">
+                            <div className="relative mb-4">
+                                <div className="h-28 w-28 rounded-full bg-cover bg-center shadow-lg ring-4 ring-white dark:ring-surface-dark" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCzHMCVvK96fNEUv0srRcBx-crnB7_8lYUFlVWOhRJ_e7NUteNXS9nqQenNiUbatwTzCPKH1ZVi_y39tzGtANFXz93TYWDrmO7FMBzGkZRCRmcypoRmlevC0vpIV3FjWK9gCOmrJji0g8aZVg4PKu_SoLPjSAb8_pZ5W7r7qrQYJgLyVVmifN_FTTl1D8_QEBnpYe9bVKPdvKtRRVhEwkPuW83k_wkxsrJCvJXmeDOtIBtnDQn1O_6cM9mlyFQ3xaA6nsgdAGCxsX-y")'}}></div>
+                                <button className="absolute bottom-1 right-1 flex h-9 w-9 items-center justify-center rounded-full bg-primary text-white shadow-md hover:bg-primary-dark transition-colors ring-2 ring-white dark:ring-surface-dark">
+                                    <span className="material-symbols-outlined text-[20px]">photo_camera</span>
+                                </button>
+                            </div>
+                            <p className="text-xs font-medium text-slate-400">Ketuk untuk ubah foto</p>
+                        </div>
+                        <form action="#" className="space-y-6 mb-8" onSubmit={(e) => e.preventDefault()}>
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2" htmlFor="name">Nama Lengkap</label>
+                                <input className="w-full rounded-xl border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-surface-dark dark:text-white shadow-sm" id="name" name="name" placeholder="Masukkan nama lengkap" type="text" defaultValue="Siti Aminah"/>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2" htmlFor="bio">Bio Singkat</label>
+                                <textarea className="w-full rounded-xl border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-surface-dark dark:text-white shadow-sm resize-none" id="bio" name="bio" placeholder="Ceritakan sedikit tentang anda..." rows="3" defaultValue="Ibu dari 2 anak. Suka masak MPASI & bekal suami 🍱"></textarea>
+                                <p className="mt-1 text-right text-xs text-slate-400">Maksimal 100 karakter</p>
+                            </div>
+                            <button className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-sm font-bold text-slate-900 shadow-lg shadow-primary/20 hover:bg-primary-dark hover:text-white transition-all active:scale-[0.98]" type="submit">
+                                <span className="material-symbols-outlined text-[20px]">save</span>
+                                Simpan Perubahan
+                            </button>
+                        </form>
+                        <div className="my-8 border-t border-slate-200/60 dark:border-slate-800/60"></div>
+                        <div className="flex flex-col gap-3">
+                            <button onClick={() => navigate('/')} className="flex w-full items-center justify-between rounded-xl bg-surface-light p-4 text-left shadow-sm ring-1 ring-slate-900/5 transition-all hover:bg-slate-50 dark:bg-surface-dark dark:ring-white/5 dark:hover:bg-white/5">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-50 text-red-500 dark:bg-red-500/10">
+                                        <span className="material-symbols-outlined text-[20px]">logout</span>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold text-slate-900 dark:text-white">Keluar</p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400">Keluar dari akun Anda saat ini</p>
+                                    </div>
+                                </div>
+                                <span className="material-symbols-outlined text-slate-300 dark:text-slate-600">chevron_right</span>
+                            </button>
+                            <button className="flex w-full items-center justify-center gap-2 px-4 py-3 text-xs font-semibold text-red-500 hover:text-red-600 hover:underline transition-colors mt-2">
+                                <span className="material-symbols-outlined text-[16px]">delete</span>
+                                Hapus Akun Saya
+                            </button>
+                        </div>
+                        <div className="mt-8 flex flex-col items-center">
+                            <span className="text-[10px] text-slate-300 dark:text-slate-600">Versi Aplikasi 1.0.2</span>
+                        </div>
+                    </div>
+                    <BottomNav active="profile" />
+                </div>
+             )
+        }
+
+        // --- App Component ---
+        const App = () => {
+            return (
+                <MemoryRouter>
+                    <Routes>
+                        <Route path="/" element={<LoginScreen />} />
+                        <Route path="/home" element={<HomeScreen />} />
+                        <Route path="/filter" element={<HomeScreen />} />
+                        <Route path="/my-recipes" element={<MyRecipesScreen />} />
+                        <Route path="/saved" element={<SavedRecipesScreen />} />
+                        <Route path="/profile" element={<ProfileScreen />} />
+                        <Route path="/add-recipe" element={<AddRecipeScreen />} />
+                        <Route path="/detail" element={<DetailScreen />} />
+                    </Routes>
+                </MemoryRouter>
+            );
+        };
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

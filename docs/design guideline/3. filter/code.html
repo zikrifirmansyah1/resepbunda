@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Beranda &amp; Cari Resep</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#107e5b", "background-light": "#f6f8f7", "background-dark": "#11211c", "card-light": "#ffffff", "card-dark": "#1a2c22"}, fontFamily: {display: "Plus Jakarta Sans"}, borderRadius: {DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px"}, boxShadow: {soft: "0 4px 20px -2px rgba(0, 0, 0, 0.05)"}}}};</script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }.no-scrollbar {
+            -ms-overflow-style: none;scrollbar-width: none;}
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white overflow-x-hidden pb-24 selection:bg-primary selection:text-black relative">
+<div class="fixed inset-0 z-[60] flex flex-col bg-background-light dark:bg-background-dark">
+<div class="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-card-dark">
+<button class="p-2 -ml-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-white">
+<span class="material-symbols-outlined" style="font-size: 24px;">close</span>
+</button>
+<h2 class="text-lg font-bold text-slate-900 dark:text-white">Filter</h2>
+<div class="w-10"></div>
+</div>
+<div class="flex-1 overflow-y-auto no-scrollbar">
+<div class="px-5 py-6 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-card-dark">
+<h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">Rentang Waktu</h3>
+<div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+<button class="shrink-0 px-4 py-2 bg-primary/10 text-primary-dark border border-primary text-sm font-semibold rounded-full whitespace-nowrap">Semua Waktu</button>
+<button class="shrink-0 px-4 py-2 bg-white dark:bg-card-dark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-sm font-semibold rounded-full whitespace-nowrap hover:border-primary/50">Hari Ini</button>
+<button class="shrink-0 px-4 py-2 bg-white dark:bg-card-dark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-sm font-semibold rounded-full whitespace-nowrap hover:border-primary/50">Minggu Ini</button>
+<button class="shrink-0 px-4 py-2 bg-white dark:bg-card-dark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-sm font-semibold rounded-full whitespace-nowrap hover:border-primary/50">Bulan Ini</button>
+</div>
+</div>
+<div class="bg-white dark:bg-card-dark mt-2">
+<h3 class="px-5 pt-6 pb-2 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Filter Berdasarkan</h3>
+<div class="flex flex-col">
+<button class="flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 active:bg-slate-100 transition-colors border-b border-slate-50 dark:border-slate-800/50">
+<div class="flex flex-col items-start text-left">
+<span class="text-base font-semibold text-slate-900 dark:text-white">Kategori</span>
+<span class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Semua Kategori</span>
+</div>
+<span class="material-symbols-outlined text-slate-400" style="font-size: 20px;">chevron_right</span>
+</button>
+<button class="flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 active:bg-slate-100 transition-colors border-b border-slate-50 dark:border-slate-800/50">
+<div class="flex flex-col items-start text-left">
+<span class="text-base font-semibold text-slate-900 dark:text-white">Durasi Memasak</span>
+<span class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Semua Durasi</span>
+</div>
+<span class="material-symbols-outlined text-slate-400" style="font-size: 20px;">chevron_right</span>
+</button>
+<button class="flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 active:bg-slate-100 transition-colors border-b border-slate-50 dark:border-slate-800/50">
+<div class="flex flex-col items-start text-left">
+<span class="text-base font-semibold text-slate-900 dark:text-white">Tingkat Kesulitan</span>
+<span class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Semua Tingkat</span>
+</div>
+<span class="material-symbols-outlined text-slate-400" style="font-size: 20px;">chevron_right</span>
+</button>
+<button class="flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 active:bg-slate-100 transition-colors border-b border-slate-50 dark:border-slate-800/50">
+<div class="flex flex-col items-start text-left">
+<span class="text-base font-semibold text-slate-900 dark:text-white">Kalori</span>
+<span class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Semua Kalori</span>
+</div>
+<span class="material-symbols-outlined text-slate-400" style="font-size: 20px;">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<div class="p-5 bg-white dark:bg-card-dark border-t border-slate-100 dark:border-slate-800 pb-8">
+<div class="flex items-center justify-between gap-4">
+<button class="text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-4 py-3">
+        Hapus Semua
+      </button>
+<button class="flex-1 bg-primary text-slate-900 text-sm font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-[0.98] transition-all">
+        Tampilkan Resep
+      </button>
+</div>
+</div>
+</div>
+<div class="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md transition-colors duration-300 border-b border-transparent dark:border-slate-800">
+<div class="flex items-center px-5 py-4 justify-between">
+<div class="flex items-center gap-3">
+<div class="relative group cursor-pointer">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-10 ring-2 ring-white dark:ring-background-dark shadow-sm" data-alt="Portrait of a smiling young mother" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDdz9rB7EJTMIfkukwcsVx1kbBJ1l0c-LrZXj9-2sbju3dWibb5OG-N1Xeu2SVaWrZC8vKD_Xo7G_T7W_4EXEax9656sP0454NJMDW8iPCdnno7pf7KfNb0gKnlBEn0aa-SjVcgrdiAdIaxXhS0Yix0Nd-zs06QZWkEtV7I2HH_WEfW9hLrCePIegnduz5adYw3qa_FC1B0t6GIdwewpanX9sx7zSlOR4sMPAMuBa5dmi9dRY2oMG12NF9X_jaE2UD9_CREvOd9-zVo");'>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Selamat Pagi,</span>
+<h2 class="text-slate-900 dark:text-white text-base font-bold leading-tight tracking-tight">Bunda Sarah</h2>
+</div>
+</div>
+<button class="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-900 dark:text-white" style="font-size: 24px;">notifications</span>
+<span class="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-background-dark"></span>
+</button>
+</div>
+</div>
+<div class="flex flex-col gap-6 pt-2">
+<div class="px-5 flex gap-3">
+<label class="flex flex-col flex-1 group">
+<div class="flex w-full items-center rounded-xl h-12 bg-white dark:bg-card-dark shadow-sm border border-slate-200 dark:border-slate-800 transition-all focus-within:ring-2 focus-within:ring-primary/50 focus-within:border-primary">
+<div class="flex items-center justify-center pl-4 pr-3 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined" style="font-size: 20px;">search</span>
+</div>
+<input class="flex w-full bg-transparent border-none text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-0 text-sm font-medium h-full rounded-r-xl pr-4" placeholder="Cari resep..." value=""/>
+</div>
+</label>
+<button class="shrink-0 h-12 w-12 flex items-center justify-center rounded-xl bg-primary text-slate-900 shadow-sm border border-primary/20 hover:bg-primary/90 active:scale-95 transition-all">
+<span class="material-symbols-outlined" style="font-size: 24px;">tune</span>
+</button>
+</div>
+<div class="flex overflow-x-auto no-scrollbar gap-3 px-5 pb-2">
+<button class="shrink-0 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold rounded-full shadow-md whitespace-nowrap">Semua</button>
+<button class="shrink-0 px-4 py-2 bg-white dark:bg-card-dark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-semibold rounded-full whitespace-nowrap hover:border-primary/50 transition-colors">Sarapan</button>
+<button class="shrink-0 px-4 py-2 bg-white dark:bg-card-dark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-semibold rounded-full whitespace-nowrap hover:border-primary/50 transition-colors">Makan Siang</button>
+<button class="shrink-0 px-4 py-2 bg-white dark:bg-card-dark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-semibold rounded-full whitespace-nowrap hover:border-primary/50 transition-colors">Makan Malam</button>
+<button class="shrink-0 px-4 py-2 bg-white dark:bg-card-dark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-semibold rounded-full whitespace-nowrap hover:border-primary/50 transition-colors">MPASI</button>
+<button class="shrink-0 px-4 py-2 bg-white dark:bg-card-dark text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-semibold rounded-full whitespace-nowrap hover:border-primary/50 transition-colors">Camilan</button>
+</div>
+<div class="px-5 flex flex-col gap-4">
+<div class="group flex items-start p-3 bg-white dark:bg-card-dark rounded-xl shadow-soft border border-slate-100 dark:border-slate-800 gap-4 cursor-pointer active:scale-[0.99] transition-transform">
+<div class="w-24 h-24 shrink-0 rounded-lg overflow-hidden bg-slate-100 relative">
+<div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDZQViMpgqlHq0ZVqqJGwAxn5YUOWDJIqdklALQRIw5o4u7JQZowg9oFhG4U5CSmEpq7a1UWPWjuoLfqk9J982t4upvDjbmdZv0YkwgFX1qr3YcxZ9sJuEVyNulXtsPsW9-g0yoRX8HPutClgx5YLP5G0OsQFlDZzrgivBXoeLBFSz0hYIihXbW85LGs-rYbCZE28NCqlPBd9Obzd3RP3J_4B73x28-Tvv53oULq3Pz8MIceg2M5UqVwSggGWXefpLjJbxwZhdKgV-V");'></div>
+</div>
+<div class="flex flex-col flex-1 justify-center py-0.5 min-h-[6rem]">
+<h3 class="font-bold text-slate-900 dark:text-white text-base mb-1 leading-tight">Sop Iga Sapi Spesial</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400 mb-2 leading-relaxed line-clamp-2">Kuah kaldu bening gurih dengan daging iga empuk, pas untuk hangatkan suasana makan malam keluarga.</p>
+<div class="flex items-center gap-3 text-slate-500 dark:text-slate-400 mt-auto">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined" style="font-size: 16px;">schedule</span>
+<span class="text-xs font-medium">45 mnt</span>
+</div>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-400 filled" style="font-size: 16px;">star</span>
+<span class="text-xs font-medium">4.9</span>
+</div>
+</div>
+</div>
+</div>
+<div class="group flex items-start p-3 bg-white dark:bg-card-dark rounded-xl shadow-soft border border-slate-100 dark:border-slate-800 gap-4 cursor-pointer active:scale-[0.99] transition-transform">
+<div class="w-24 h-24 shrink-0 rounded-lg overflow-hidden bg-slate-100 relative">
+<div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBAU-ICpdIwEXam8JX8OkcTYE2qMM3PoN-Q6lzF0JwpyNfjQ7eiagZwTA_7RkUCcg6s3MwZml-L5D0BImke_rfV9x65dlYT2XMmqMvbPpeRn9NRty4v82Ebf5aQuPbHvD8KwxJXMcTQRulh4c3kPPFm1LiyhErNhIzrDpL4TP10OSXtG2tBUfmRi-f0xX5-R7v9coAwS12m6mJJ6f2Uccj2jui7jGGOMGeqsbqx8yhaXKVaLdKk8nC7Np4Cd9B0ksPj-x2E6LBzryd4");'></div>
+</div>
+<div class="flex flex-col flex-1 justify-center py-0.5 min-h-[6rem]">
+<h3 class="font-bold text-slate-900 dark:text-white text-base mb-1 leading-tight">Salmon Teriyaki Sehat</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400 mb-2 leading-relaxed line-clamp-2">Kaya omega-3 dengan saus teriyaki manis gurih buatan sendiri, menu favorit si kecil yang susah makan ikan.</p>
+<div class="flex items-center gap-3 text-slate-500 dark:text-slate-400 mt-auto">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined" style="font-size: 16px;">schedule</span>
+<span class="text-xs font-medium">20 mnt</span>
+</div>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-green-500" style="font-size: 16px;">eco</span>
+<span class="text-xs font-medium">Mudah</span>
+</div>
+</div>
+</div>
+</div>
+<div class="group flex items-start p-3 bg-white dark:bg-card-dark rounded-xl shadow-soft border border-slate-100 dark:border-slate-800 gap-4 cursor-pointer active:scale-[0.99] transition-transform">
+<div class="w-24 h-24 shrink-0 rounded-lg overflow-hidden bg-slate-100 relative">
+<div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBMQxolKlYsS9sR7f9I1-HLW8dAkzzpEeTjqjA9LxgwQo0KDiDcB3WZ-0nF7TyUEkMFIo0SXf3ZB1OfzLnZZcV1f5yyBJKGMAFofbUpQAUvdhZ6qpK8pGDwjuqQQ99h0gPhCBtv_V9jttWY3HvdXECFS5kROouSB7boAzclXnKmPzU4riId9uuTQT39yLXiad1h9HrbbfEz-Kr47g04wJgEFdpr2EeAxEJofAj1avt0b5JUITvSuJ-zzax7mVI7Hf2-z71igDBBJXmJ");'></div>
+</div>
+<div class="flex flex-col flex-1 justify-center py-0.5 min-h-[6rem]">
+<h3 class="font-bold text-slate-900 dark:text-white text-base mb-1 leading-tight">Puding Mangga Susu</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400 mb-2 leading-relaxed line-clamp-2">Dessert lembut dan manis alami dari mangga harum manis pilihan, camilan sehat sepulang sekolah.</p>
+<div class="flex items-center gap-3 text-slate-500 dark:text-slate-400 mt-auto">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined" style="font-size: 16px;">schedule</span>
+<span class="text-xs font-medium">60 mnt</span>
+</div>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-orange-400" style="font-size: 16px;">local_fire_department</span>
+<span class="text-xs font-medium">210 kkal</span>
+</div>
+</div>
+</div>
+</div>
+<div class="group flex items-start p-3 bg-white dark:bg-card-dark rounded-xl shadow-soft border border-slate-100 dark:border-slate-800 gap-4 cursor-pointer active:scale-[0.99] transition-transform">
+<div class="w-24 h-24 shrink-0 rounded-lg overflow-hidden bg-slate-100 relative">
+<div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCuda5Bmgm-d92mcryF0BvnfNcvNi-WoIyW6KzwURg7BCaxdZpPqsTI5QMNhERKAKDAqRG9XRHjgUBQuRKFTvn3MY2wKmhdmPvi_TNOJq-spT1P3ijwu9MwZfb7tg8H8pvjPnLJrcISjVjBY9m6TyH95_plByp44oQ6VLfPAUXRuYRnRe5c0vuHad3Q5n2ppC9EGCZ4lzHjo6PeKSOluiEOIAXw4Hl3wcLgnFdqreJysEmQ1oXGpJ6RQscR7AguirtArl3amUAZ_96F");'></div>
+</div>
+<div class="flex flex-col flex-1 justify-center py-0.5 min-h-[6rem]">
+<h3 class="font-bold text-slate-900 dark:text-white text-base mb-1 leading-tight">Nasi Goreng Kampung</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400 mb-2 leading-relaxed line-clamp-2">Sarapan praktis 15 menit dengan bumbu tradisional dan telur mata sapi, solusi cepat pagi yang sibuk.</p>
+<div class="flex items-center gap-3 text-slate-500 dark:text-slate-400 mt-auto">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined" style="font-size: 16px;">schedule</span>
+<span class="text-xs font-medium">15 mnt</span>
+</div>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<span class="text-xs font-medium">Sarapan</span>
+</div>
+</div>
+</div>
+<div class="group flex items-start p-3 bg-white dark:bg-card-dark rounded-xl shadow-soft border border-slate-100 dark:border-slate-800 gap-4 cursor-pointer active:scale-[0.99] transition-transform">
+<div class="w-24 h-24 shrink-0 rounded-lg overflow-hidden bg-slate-100 relative">
+<div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDDnS15ZUzmxROmz3_1GVodDX_LIx28gHHSgpNssLAmmqRAy2bKskFkL7M6v5Tmoz1vatfulgp9xPY8z8nkHWnDX9rXasdfi7tb1RhFWCIp-FrENPEm08pTHV1kHRXZj3I44j05xzSzYlM_U4WmVAHEL-RW159AJHDiIKto4FvhqrsRjTVraJZuQtSKdCoU0faLeRWVs15i20TciK9Du2nLF6do3SfFSdwUD8s24QVMqKzY4LO1iLvkXpWbpbWG3yu5C53eIa4xe-p7");'></div>
+</div>
+<div class="flex flex-col flex-1 justify-center py-0.5 min-h-[6rem]">
+<h3 class="font-bold text-slate-900 dark:text-white text-base mb-1 leading-tight">Bubur Manado</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400 mb-2 leading-relaxed line-clamp-2">Bubur kaya nutrisi dengan campuran sayuran segar, jagung, dan labu kuning. Tekstur lembut pas untuk MPASI.</p>
+<div class="flex items-center gap-3 text-slate-500 dark:text-slate-400 mt-auto">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined" style="font-size: 16px;">schedule</span>
+<span class="text-xs font-medium">40 mnt</span>
+</div>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<span class="text-xs font-medium">MPASI</span>
+</div>
+</div>
+</div>
+<div class="group flex items-start p-3 bg-white dark:bg-card-dark rounded-xl shadow-soft border border-slate-100 dark:border-slate-800 gap-4 cursor-pointer active:scale-[0.99] transition-transform">
+<div class="w-24 h-24 shrink-0 rounded-lg overflow-hidden bg-slate-100 relative">
+<div class="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDhketi5b_HF9xip7JLYxIayl0B0GsemYXaz5j1J9YO2L7dkoQ_Poc3VWUVqvH8Pd512TjsWfefYiAeb8u1KCEY5zKMCL1o0CbCtJkuFWLvnRwr2OrO7_0t333QIOKy6oJXQwEj-NT6YsK93eFJ9gUGr-hOGmRvY3Kvhj2Zss51qBpW3fVYLrt2l_nPwkBJgtbq4Yp4lK_sYceOCUDrWuh0Y_UGpO26TcXhAO2IUyrDrmTMpAvidOz__mWC5lh1sHmvsvipn5ALFtQ7");'></div>
+</div>
+<div class="flex flex-col flex-1 justify-center py-0.5 min-h-[6rem]">
+<h3 class="font-bold text-slate-900 dark:text-white text-base mb-1 leading-tight">Salad Buah Segar</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400 mb-2 leading-relaxed line-clamp-2">Potongan buah-buahan segar dengan dressing yogurt madu yang ringan, pilihan camilan sore yang menyegarkan.</p>
+<div class="flex items-center gap-3 text-slate-500 dark:text-slate-400 mt-auto">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined" style="font-size: 16px;">schedule</span>
+<span class="text-xs font-medium">10 mnt</span>
+</div>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<span class="text-xs font-medium">Camilan</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="fixed bottom-0 left-0 w-full bg-white dark:bg-card-dark border-t border-slate-100 dark:border-slate-800 pb-5 pt-2 px-6 z-50">
+<div class="flex justify-between items-center max-w-md mx-auto">
+<button class="flex flex-col items-center gap-1 p-2 text-primary">
+<span class="material-symbols-outlined filled" style="font-size: 26px;">home</span>
+<span class="text-[10px] font-bold">Beranda</span>
+</button>
+<button class="flex flex-col items-center gap-1 p-2 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" style="font-size: 26px;">search</span>
+<span class="text-[10px] font-medium">Cari</span>
+</button>
+<button class="relative -top-6 bg-primary text-slate-900 rounded-full p-4 shadow-lg shadow-primary/40 transform hover:scale-105 transition-transform">
+<span class="material-symbols-outlined" style="font-size: 28px;">add</span>
+</button>
+<button class="flex flex-col items-center gap-1 p-2 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" style="font-size: 26px;">bookmark</span>
+<span class="text-[10px] font-medium">Disimpan</span>
+</button>
+<button class="flex flex-col items-center gap-1 p-2 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" style="font-size: 26px;">person</span>
+<span class="text-[10px] font-medium">Profil</span>
+</button>
+</div>
+</div>
+</body></html>

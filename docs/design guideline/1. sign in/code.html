@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Masuk / Daftar - Aplikasi Resep</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#059669", "primary-dark": "#0eb553", "background-light": "#f5f8f7", "background-dark": "#0f231d", "surface-light": "#ffffff", "surface-dark": "#1a3324", "text-main-light": "#0d1b13", "text-main-dark": "#e0e7e3", "text-muted-light": "#4c9a6c", "text-muted-dark": "#8abf9e"}, fontFamily: {display: "Plus Jakarta Sans"}, borderRadius: {DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px"}}}};</script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-main-light dark:text-text-main-dark transition-colors duration-200">
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-hidden max-w-md mx-auto bg-background-light dark:bg-background-dark shadow-2xl">
+<div class="flex items-center p-4 justify-between absolute top-0 left-0 right-0 z-10">
+<div class="bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-md rounded-full p-2 cursor-pointer shadow-sm hover:bg-white dark:hover:bg-surface-dark transition-colors">
+<span class="material-symbols-outlined text-text-main-light dark:text-text-main-dark">arrow_back</span>
+</div>
+</div>
+<div class="relative w-full h-[320px]">
+<div class="absolute inset-0 bg-cover bg-center rounded-b-[2.5rem]" data-alt="Young mother cooking with fresh vegetables in a bright kitchen" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDH8LBRGxJnZs5MpM6-Dlfrnb8zZpn-Qd6gYvf02Sg49f7Lm_FChOvk9HpBSUEVUVkxx-j0sV363bp4FOQLD2ApDRPPlZelOJ_C3jyeEOjzfuVYrDZconVFk7H6FcqDRMgHj-qNyPTQDS9Es9lEgNWK1QjNcTNmcO0KFZcUWaDExHBQO5CsxSeTjE70ZujGh9CqgPItiiwilHmU5KpUjKihPGCZH79MTSmYyXFl1sMaSXpZg13UqR-bXAZiMRpfzPDtSgYS1fuIMctU");'>
+<div class="absolute inset-0 bg-gradient-to-t from-background-light dark:from-background-dark via-background-light/20 dark:via-background-dark/20 to-transparent rounded-b-[2.5rem]"></div>
+</div>
+<div class="absolute bottom-0 left-0 w-full px-6 pb-6 text-center">
+<h2 class="text-3xl font-bold tracking-tight mb-2 text-text-main-light dark:text-text-main-dark drop-shadow-sm">Mulai Masak Enak!</h2>
+<p class="text-text-muted-light dark:text-text-muted-dark text-base font-medium">Temukan ribuan resep sehat untuk keluarga.</p>
+</div>
+</div>
+<div class="flex-1 flex flex-col px-6 pt-8 pb-8 justify-between">
+<div class="w-full">
+<div class="space-y-5">
+<div class="space-y-2">
+<label class="text-sm font-semibold text-text-main-light dark:text-text-main-dark ml-1" for="email">Alamat Email</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted-light dark:text-text-muted-dark material-symbols-outlined">mail</span>
+<input class="w-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-xl py-4 pl-12 pr-4 text-text-main-light dark:text-text-main-dark placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" id="email" placeholder="nama@email.com" type="email"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-semibold text-text-main-light dark:text-text-main-dark ml-1" for="password">Kata Sandi</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted-light dark:text-text-muted-dark material-symbols-outlined">lock</span>
+<input class="w-full bg-surface-light dark:bg-surface-dark border border-gray-200 dark:border-gray-700 rounded-xl py-4 pl-12 pr-12 text-text-main-light dark:text-text-main-dark placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" id="password" placeholder="Masukan kata sandi" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+<span class="material-symbols-outlined text-[20px]">visibility_off</span>
+</button>
+</div>
+<div class="flex justify-end">
+<a class="text-sm font-medium text-primary hover:text-primary-dark transition-colors" href="#">Lupa Kata Sandi?</a>
+</div>
+</div>
+</div>
+<div class="mt-8 space-y-3">
+<button class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group">
+<span>Masuk</span>
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">login</span>
+</button>
+<button class="w-full bg-transparent border-2 border-primary/20 dark:border-gray-700 hover:border-primary dark:hover:border-primary text-primary dark:text-white dark:hover:text-primary font-bold py-4 rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+<span>Daftar Akun Baru</span>
+</button>
+</div>
+</div>
+<p class="text-center text-xs text-text-muted-light dark:text-text-muted-dark mt-8 px-4 leading-relaxed opacity-80">
+        Dengan melanjutkan, Anda menyetujui <a class="underline hover:text-primary" href="#">Syarat &amp; Ketentuan</a> kami.
+    </p>
+</div>
+</div>
+</body></html>
