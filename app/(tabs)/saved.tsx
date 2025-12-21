@@ -1,9 +1,9 @@
 import { Text, View } from "react-native";
 
-export default function Modal() {
+export default function Saved() {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Ini modal</Text>
+      <Text>Disimpan</Text>
     </View>
   );
 }
