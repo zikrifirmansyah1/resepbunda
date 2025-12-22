@@ -31,7 +31,8 @@ const HomeScreen = () => {
 
   const fetchRecipes = async () => {
     try {
-      const result = await querySql<Recipe>('SELECT * FROM recipes');
+      // Ambil HANYA resep publik untuk feed utama
+      const result = await querySql<Recipe>('SELECT * FROM recipes WHERE isPrivate = 0');
       setRecipes(result);
     } catch (e) {
       console.error('Failed to fetch recipes', e);
@@ -42,8 +43,14 @@ const HomeScreen = () => {
 
   const filteredAndSortedRecipes = useMemo(() => {
     let result = recipes.filter(recipe => {
+      const lowerCaseQuery = searchQuery.toLowerCase();
+      
+      // Logika Filter yang Diperbarui
       const matchesCategory = selectedCategory === 'all' || recipe.category === selectedCategory;
-      const matchesSearch = recipe.title.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = 
+        recipe.title.toLowerCase().includes(lowerCaseQuery) ||
+        recipe.category.toLowerCase().includes(lowerCaseQuery); // Mencari di kategori juga
+
       return matchesCategory && matchesSearch;
     });
 
@@ -55,7 +62,6 @@ const HomeScreen = () => {
     } else if (sortBy === 'calories') {
       result.sort((a, b) => parseNumber(a.calories || '0') - parseNumber(b.calories || '0'));
     }
-    // 'recommended' tidak melakukan sort tambahan, menggunakan urutan default dari DB
 
     return result;
   }, [searchQuery, selectedCategory, sortBy, recipes]);
@@ -80,7 +86,7 @@ const HomeScreen = () => {
           <Search size={18} color={theme.colors.neutral.medium} style={{ marginLeft: 16 }} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search recipes..."
+            placeholder="Search recipes or categories..." // Placeholder diperbarui
             placeholderTextColor={theme.colors.neutral.medium}
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -138,10 +144,11 @@ const HomeScreen = () => {
   );
 };
 
+// Styles tetap sama
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.neutral.bg, // Latar belakang utama
+    backgroundColor: theme.colors.neutral.bg,
   },
   listContentContainer: {
     paddingHorizontal: theme.spacing.md,
@@ -149,7 +156,7 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     paddingBottom: theme.spacing.sm,
-    backgroundColor: '#FFFFFF', // Header putih
+    backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.neutral.light,
     marginBottom: theme.spacing.md,
