@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { getSession, login, logout } from "../services/auth";
-import { initDb } from "../services/db/migrations";
+import { getSession, login, logout, register } from "../services/auth";
 import type { AuthSession } from "../types/auth";
 
 type AuthState = {
@@ -8,12 +7,13 @@ type AuthState = {
   session: AuthSession | null;
   refresh: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, name: string) => Promise<void>;
   signOut: () => Promise<void>;
 };
 
 const Ctx = createContext<AuthState | null>(null);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children, dbReady }: { children: React.ReactNode; dbReady: boolean }) {
   const [ready, setReady] = useState(false);
   const [session, setSession] = useState<AuthSession | null>(null);
 
@@ -27,21 +27,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await refresh();
   }
 
+  async function signUp(email: string, password: string, name: string) {
+    await register(name, email, password);
+  }
+
   async function signOut() {
     await logout();
     await refresh();
   }
 
   useEffect(() => {
+    if (!dbReady) return;
     (async () => {
-      await initDb();
       await refresh();
       setReady(true);
     })();
-  }, []);
+  }, [dbReady]);
 
   const value = useMemo<AuthState>(
-    () => ({ ready, session, refresh, signIn, signOut }),
+    () => ({ ready, session, refresh, signIn, signUp, signOut }),
     [ready, session]
   );
 

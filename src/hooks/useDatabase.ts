@@ -1,22 +1,20 @@
-import { useState, useEffect } from 'react';
-import { initDb } from '../services/db/migrations';
+import { useEffect, useState } from "react";
+import { initDb } from "../services/db/migrations";
 
 export function useDatabase() {
   const [isDbReady, setDbReady] = useState(false);
 
   useEffect(() => {
-    async function setup() {
+    (async () => {
       try {
-        console.log('Initializing database...');
+        console.log("Initializing database...");
         await initDb();
         setDbReady(true);
-        console.log('Database is ready.');
+        console.log("Database is ready.");
       } catch (e) {
-        console.error('Failed to initialize database', e);
+        console.error("Failed to initialize database", e);
       }
-    }
-
-    setup();
+    })();
   }, []);
 
   return isDbReady;

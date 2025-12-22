@@ -1,10 +1,9 @@
 import { Stack, router, useSegments } from "expo-router";
 import React, { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
-import { AuthProvider, useAuth } from "../src/providers/AuthProvider";
 import { useDatabase } from "../src/hooks/useDatabase";
+import { AuthProvider, useAuth } from "../src/providers/AuthProvider";
 import { theme } from "../src/theme";
-
 function Splash() {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: theme.colors.neutral.bg }}>
@@ -13,38 +12,27 @@ function Splash() {
   );
 }
 
-function GuardedStack() {
+function GuardedStack({ appReady }: { appReady: boolean }) {
   const { ready: authReady, session } = useAuth();
-  const isDbReady = useDatabase(); // Menggunakan hook database
   const segments = useSegments();
 
-  // Aplikasi dianggap siap hanya jika autentikasi dan database sudah siap
-  const appReady = authReady && isDbReady;
-
   useEffect(() => {
-    if (!appReady) return; // Tunggu kedua proses selesai
+    if (!appReady || !authReady) return;
 
     const inAuth = segments[0] === "(auth)";
+    if (!session && !inAuth) router.replace("/(auth)/login");
+    else if (session && inAuth) router.replace("/(tabs)");
+  }, [appReady, authReady, session, segments]);
 
-    if (!session && !inAuth) {
-      router.replace("/(auth)/login");
-    } else if (session && inAuth) {
-      router.replace("/(tabs)");
-    }
-  }, [appReady, session, segments]);
-
-  if (!appReady) {
-    return <Splash />;
-  }
-
-  // Tampilkan navigasi utama setelah semua siap
+  if (!appReady || !authReady) return <Splash />;
   return <Stack screenOptions={{ headerShown: false }} />;
 }
 
 export default function RootLayout() {
+  const dbReady = useDatabase();
   return (
-    <AuthProvider>
-      <GuardedStack />
+    <AuthProvider dbReady={dbReady}>
+      <GuardedStack appReady={dbReady} />
     </AuthProvider>
   );
 }

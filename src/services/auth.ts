@@ -1,7 +1,7 @@
 import type { AuthSession } from "../types/auth";
-import { execSql, querySql } from "./db/client";
+import { execSql, querySql } from "./db/dbClient";
 
-export type AuthErrorCode = "EMAIL_NOT_FOUND" | "INVALID_PASSWORD";
+export type AuthErrorCode = "EMAIL_NOT_FOUND" | "INVALID_PASSWORD" | "EMAIL_ALREADY_USED";
 
 export class AuthError extends Error {
   code: AuthErrorCode;
@@ -21,6 +21,21 @@ export async function getSession(): Promise<AuthSession | null> {
     email: r.email || "",
     loggedInAt: r.logged_in_at || "",
   };
+}
+
+export async function register(name: string, email: string, password: string): Promise<void> {
+  const n = name.trim();
+  const e = email.trim().toLowerCase();
+
+  const rows = await querySql<any>("SELECT id FROM users WHERE email = ? LIMIT 1", [e]);
+  if (rows[0]) throw new AuthError("EMAIL_ALREADY_USED");
+
+  await execSql("INSERT INTO users (name, email, password, created_at) VALUES (?,?,?,?)", [
+    n,
+    e,
+    password,
+    new Date().toISOString(),
+  ]);
 }
 
 export async function login(email: string, password: string): Promise<void> {

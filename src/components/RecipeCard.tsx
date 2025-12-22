@@ -1,8 +1,8 @@
+import { ArrowRight, ChefHat, Clock } from 'lucide-react-native';
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Clock, User, ChefHat } from 'lucide-react-native';
-import { Recipe } from '../types/recipe';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { theme } from '../theme';
+import { Recipe } from '../types/recipe';
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -11,19 +11,24 @@ interface RecipeCardProps {
 
 const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onPress }) => {
   return (
-    <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
-      {/* Card Header */}
-      <View style={styles.cardHeader}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>{recipe.title}</Text>
+    <TouchableOpacity 
+      style={styles.cardContainer} 
+      onPress={onPress}
+      activeOpacity={0.9} // Sentuhan lebih responsif
+    >
+      {/* Top Row: Header & Time */}
+      <View style={styles.headerRow}>
+        <View style={styles.titleWrapper}>
+          <Text style={styles.title} numberOfLines={2}>{recipe.title}</Text>
           {recipe.isPrivate === 1 && (
             <View style={styles.privateBadge}>
               <Text style={styles.privateBadgeText}>PRIVATE</Text>
             </View>
           )}
         </View>
-        <View style={styles.timeContainer}>
-          <Clock size={14} color={theme.colors.neutral.medium} />
+        
+        <View style={styles.timeBadge}>
+          <Clock size={12} color={theme.colors.neutral.medium} />
           <Text style={styles.timeText}>{recipe.cookingTime}</Text>
         </View>
       </View>
@@ -33,22 +38,29 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onPress }) => {
         {recipe.description}
       </Text>
 
-      {/* Card Footer */}
-      <View style={styles.cardFooter}>
-        <View style={styles.creatorInfo}>
-          <View style={styles.avatar}>
-            <User size={16} color={theme.colors.neutral.medium} />
+      {/* Divider (Optional, kept subtle) */}
+      <View style={styles.divider} />
+
+      {/* Footer: Creator & Action */}
+      <View style={styles.footerRow}>
+        <View style={styles.creatorSection}>
+          <View style={styles.avatarContainer}>
+            <Text style={styles.avatarText}>
+              {recipe.creator.charAt(0).toUpperCase()}
+            </Text>
           </View>
           <View>
             <Text style={styles.creatorName}>{recipe.creator}</Text>
-            <View style={styles.creatorTypeContainer}>
-              <ChefHat size={12} color={theme.colors.neutral.medium} />
+            <View style={styles.creatorTypeWrapper}>
+              <ChefHat size={10} color={theme.colors.primary.DEFAULT} />
               <Text style={styles.creatorType}>{recipe.creatorType}</Text>
             </View>
           </View>
         </View>
-        <View style={styles.viewButton}>
-          <Text style={styles.viewButtonText}>View Recipe</Text>
+
+        {/* Modern Action Button */}
+        <View style={styles.actionButton}>
+          <ArrowRight size={18} color={theme.colors.primary.DEFAULT} />
         </View>
       </View>
     </TouchableOpacity>
@@ -57,121 +69,137 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onPress }) => {
 
 const styles = StyleSheet.create({
   cardContainer: {
-    backgroundColor: '#FFFFFF', // Menggunakan putih solid untuk kartu
-    borderRadius: theme.radius.md,
-    padding: theme.spacing.md,
-    marginBottom: theme.spacing.sm,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20, // Lebih bulat = lebih modern
+    padding: 16,
+    marginBottom: 16,
+    // Soft Shadow (Elevation)
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.05, // Bayangan sangat halus
+    shadowRadius: 12,
+    elevation: 3, 
     borderWidth: 1,
-    borderColor: theme.colors.neutral.light,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    borderColor: 'rgba(0,0,0,0.02)', // Border super tipis nyaris transparan
   },
-  cardHeader: {
+  
+  // Header
+  headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: theme.spacing.xs,
+    marginBottom: 8,
   },
-  titleContainer: {
+  titleWrapper: {
     flex: 1,
-    marginRight: theme.spacing.xs,
+    paddingRight: 12,
   },
   title: {
-    fontSize: 18,
+    fontSize: 17,
     fontFamily: theme.font.bold,
     color: theme.colors.neutral.dark,
+    lineHeight: 24, // Jarak antar baris judul lebih lega
   },
   privateBadge: {
-    backgroundColor: theme.colors.primary.bg, // Menggunakan warna dari tema
-    borderColor: theme.colors.primary.light,
-    borderWidth: 1,
+    backgroundColor: '#FFF4E5', // Orange muda soft
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 6,
+    borderRadius: 4,
     alignSelf: 'flex-start',
-    marginTop: 4,
+    marginTop: 6,
   },
   privateBadgeText: {
-    fontSize: 10,
+    fontSize: 9,
     fontFamily: theme.font.bold,
-    color: theme.colors.primary.dark, // Menggunakan warna dari tema
+    color: '#B45309', // Dark orange
+    letterSpacing: 0.5,
   },
-  timeContainer: {
+  timeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.neutral.bg,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: theme.radius.sm,
+    backgroundColor: '#F3F4F6', // Light gray background
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
+    gap: 4,
   },
   timeText: {
     fontSize: 12,
-    marginLeft: 4,
-    color: theme.colors.neutral.medium,
     fontFamily: theme.font.medium,
+    color: theme.colors.neutral.medium,
   },
+
+  // Description
   description: {
     fontSize: 14,
     color: theme.colors.neutral.medium,
-    marginBottom: theme.spacing.md,
     lineHeight: 20,
     fontFamily: theme.font.regular,
+    marginBottom: 16,
   },
-  cardFooter: {
+
+  divider: {
+    height: 1,
+    backgroundColor: '#F3F4F6',
+    marginBottom: 12,
+  },
+
+  // Footer
+  footerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.neutral.light,
-    paddingTop: theme.spacing.sm,
-    marginTop: theme.spacing.xs,
   },
-  creatorInfo: {
+  creatorSection: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 10,
   },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: theme.colors.neutral.bg,
+  avatarContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: theme.colors.primary.bg, // Menggunakan warna tema soft
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: theme.spacing.sm,
-    borderWidth: 1,
-    borderColor: theme.colors.neutral.light,
+  },
+  avatarText: {
+    fontFamily: theme.font.bold,
+    color: theme.colors.primary.DEFAULT,
+    fontSize: 16,
   },
   creatorName: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: theme.font.bold,
     color: theme.colors.neutral.dark,
   },
-  creatorTypeContainer: {
+  creatorTypeWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 2,
+    gap: 4,
   },
   creatorType: {
-    fontSize: 12,
+    fontSize: 11,
     color: theme.colors.neutral.medium,
-    marginLeft: 4,
-    fontFamily: theme.font.regular,
+    fontFamily: theme.font.medium,
   },
-  viewButton: {
-    backgroundColor: theme.colors.primary.bg,
-    borderColor: theme.colors.primary.light,
+
+  // Tombol Panah (Action)
+  actionButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
     borderWidth: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: theme.radius.pill,
-  },
-  viewButtonText: {
-    color: theme.colors.primary.dark,
-    fontSize: 12,
-    fontFamily: theme.font.bold,
+    borderColor: '#F3F4F6',
+    // Shadow kecil untuk tombol
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
 });
 

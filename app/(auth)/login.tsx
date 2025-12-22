@@ -3,6 +3,7 @@ import * as Linking from "expo-linking";
 import { router } from "expo-router";
 import { useMemo, useState } from "react";
 import {
+  Image,
   ImageBackground,
   KeyboardAvoidingView,
   Platform,
@@ -70,7 +71,10 @@ export default function LoginScreen() {
           return;
         }
         if (err.code === "EMAIL_NOT_FOUND") {
-          openModal("Ups!", "Kamu belum daftar nih. Daftar dulu yuk, biar bisa simpan resep favorit.");
+          openModal(
+            "Ups!",
+            "Kamu belum daftar nih. Daftar dulu yuk, biar bisa simpan resep favorit."
+          );
           return;
         }
       }
@@ -88,7 +92,10 @@ export default function LoginScreen() {
 
   return (
     <ImageBackground source={{ uri: heroUri }} style={{ flex: 1 }} resizeMode="cover">
-      <KeyboardAvoidingView behavior={Platform.select({ ios: "padding", android: undefined })} style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        behavior={Platform.select({ ios: "padding", android: undefined })}
+        style={{ flex: 1 }}
+      >
         <Pressable
           onPress={() => router.back()}
           style={{
@@ -109,12 +116,12 @@ export default function LoginScreen() {
         <View style={{ flex: 1, justifyContent: "flex-end" }}>
           <View
             style={{
-              backgroundColor: "#fff", // ✅ SOLID
+              backgroundColor: "#fff",
               borderTopLeftRadius: 28,
               borderTopRightRadius: 28,
               paddingHorizontal: theme.spacing.lg,
               paddingTop: theme.spacing.xl,
-              paddingBottom: theme.spacing.xl,
+              paddingBottom: 18,
               borderTopWidth: 1,
               borderColor: theme.colors.neutral.light,
 
@@ -219,7 +226,11 @@ export default function LoginScreen() {
                     gap: 10,
                   }}
                 >
-                  <Ionicons name="lock-closed-outline" size={18} color={theme.colors.neutral.medium} />
+                  <Ionicons
+                    name="lock-closed-outline"
+                    size={18}
+                    color={theme.colors.neutral.medium}
+                  />
                   <TextInput
                     value={password}
                     onChangeText={setPassword}
@@ -243,7 +254,13 @@ export default function LoginScreen() {
                 </View>
 
                 <Pressable onPress={onForgot} style={{ alignSelf: "flex-end", marginTop: 10 }}>
-                  <Text style={{ color: theme.colors.primary.DEFAULT, fontSize: 12, fontFamily: theme.font.medium }}>
+                  <Text
+                    style={{
+                      color: theme.colors.primary.DEFAULT,
+                      fontSize: 12,
+                      fontFamily: theme.font.medium,
+                    }}
+                  >
                     Lupa Kata Sandi?
                   </Text>
                 </Pressable>
@@ -265,7 +282,7 @@ export default function LoginScreen() {
                 </Text>
               </Pressable>
 
-              {/* Button Register (sesuaikan theme) */}
+              {/* Button Register */}
               <Pressable
                 onPress={() => router.push("/(auth)/register")}
                 style={{
@@ -277,7 +294,13 @@ export default function LoginScreen() {
                   borderColor: theme.colors.primary.light,
                 }}
               >
-                <Text style={{ color: theme.colors.primary.dark, fontSize: 15, fontFamily: theme.font.semibold }}>
+                <Text
+                  style={{
+                    color: theme.colors.primary.dark,
+                    fontSize: 15,
+                    fontFamily: theme.font.semibold,
+                  }}
+                >
                   Daftar Akun Baru
                 </Text>
               </Pressable>
@@ -293,11 +316,45 @@ export default function LoginScreen() {
               >
                 Mock: bunda@example.com / Bunda123!
               </Text>
+
+              {/* Branding ITTS (paling bawah) */}
+              <View
+                style={{
+                  marginTop: 14,
+                  paddingTop: 12,
+                  borderTopWidth: 1,
+                  borderTopColor: theme.colors.neutral.light,
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 11,
+                    color: theme.colors.neutral.medium,
+                    fontFamily: theme.font.regular,
+                    marginBottom: 8,
+                  }}
+                >
+                  In association with ITTS
+                </Text>
+
+                <Image
+                  source={require("../../assets/Logo_ITTS/logo-itts-biru.png")}
+                  style={{ width: 96, height: 38 }}
+                  resizeMode="contain"
+                  accessibilityLabel="Logo ITTS"
+                />
+              </View>
             </View>
           </View>
         </View>
 
-        <AppModal visible={modalOpen} title={modalTitle} message={modalMessage} onClose={() => setModalOpen(false)} />
+        <AppModal
+          visible={modalOpen}
+          title={modalTitle}
+          message={modalMessage}
+          onClose={() => setModalOpen(false)}
+        />
       </KeyboardAvoidingView>
     </ImageBackground>
   );
