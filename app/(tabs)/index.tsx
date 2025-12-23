@@ -1,8 +1,9 @@
 import { useFocusEffect } from "@react-navigation/native";
 import { router } from "expo-router";
-import { ChefHat, LogOut, Search, SlidersHorizontal } from "lucide-react-native"; // 1. Import LogOut icon
+import { ChefHat, LogOut, Search, SlidersHorizontal } from "lucide-react-native";
 import React, { useCallback, useMemo, useState } from "react";
 import {
+  Alert, // 1. Import Alert
   FlatList,
   ScrollView,
   StyleSheet,
@@ -14,7 +15,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import FilterModal, { SortOption } from "../../src/components/FilterModal";
 import RecipeCard from "../../src/components/RecipeCard";
-import { useAuth } from "../../src/providers/AuthProvider"; // 2. Import useAuth
+import { useAuth } from "../../src/providers/AuthProvider";
 import { querySql } from "../../src/services/db";
 import { theme } from "../../src/theme";
 import type { Recipe } from "../../src/types/recipe";
@@ -30,13 +31,33 @@ const categories = [
 const parseNumber = (str: string) => parseInt(String(str).replace(/\D/g, "")) || 0;
 
 export default function HomeScreen() {
-  const { signOut } = useAuth(); // 3. Get signOut function
+  const { signOut } = useAuth();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [userName, setUserName] = useState("Chef");
   const [searchQuery, setSearchQuery] = useState("");
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
   const [sortBy, setSortBy] = useState<SortOption>("recommended");
   const [selectedCategory, setSelectedCategory] = useState("all");
+
+  // 2. Buat fungsi untuk menampilkan dialog konfirmasi
+  const handleLogout = () => {
+    Alert.alert(
+      "Konfirmasi Logout", // Judul
+      "Apakah Anda yakin ingin keluar dari akun Resep Bunda?", // Pesan
+      [
+        {
+          text: "Batal",
+          style: "cancel",
+        },
+        {
+          text: "Logout",
+          onPress: signOut, // Panggil fungsi signOut asli jika ditekan
+          style: "destructive",
+        },
+      ],
+      { cancelable: true } // Izinkan menutup alert dengan menekan di luar
+    );
+  };
 
   const fetchData = async () => {
     try {
@@ -109,8 +130,8 @@ export default function HomeScreen() {
           </Text>
           <Text style={styles.subGreetingText}>What do you want to cook today?</Text>
         </View>
-        {/* 4. Add Logout Button */}
-        <TouchableOpacity onPress={signOut} style={styles.logoutButton}>
+        {/* 3. Hubungkan tombol ke fungsi handleLogout */}
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
           <LogOut color={theme.colors.neutral.medium} size={24} />
         </TouchableOpacity>
       </View>
