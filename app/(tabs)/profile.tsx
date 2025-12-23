@@ -38,7 +38,7 @@ export default function Profile() {
 
   // Modal State
   const [editOpen, setEditOpen] = useState(false);
-  
+
   // Form State
   const [fullName, setFullName] = useState("");
   const [bio, setBio] = useState("");
@@ -72,19 +72,7 @@ export default function Profile() {
         [email]
       );
 
-      if (rows.length === 0) {
-        await querySql(
-          `INSERT INTO users (email, fullName, bio, avatarUrl, badgePrimary, badgeSecondary)
-           VALUES (?, ?, ?, ?, ?, ?)`,
-          [email, "", "", "", "Recipe Newbie", "Food Critic"]
-        );
-        const again = await querySql<UserProfileRow>(
-          `SELECT * FROM users WHERE email = ? LIMIT 1`, [email]
-        );
-        setProfile(again[0] ?? null);
-      } else {
-        setProfile(rows[0]);
-      }
+      setProfile(rows[0] ?? null);
     } catch (e) {
       console.error("Failed to load profile", e);
     } finally {
@@ -134,7 +122,7 @@ export default function Profile() {
       </View>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
-        
+
         {/* Profile Card Section */}
         <View style={styles.profileSection}>
           <View style={styles.avatarContainer}>
@@ -153,20 +141,20 @@ export default function Profile() {
           <Text style={styles.nameText}>
             {profile?.fullName?.trim() ? profile.fullName : "Chef Unknown"}
           </Text>
-          
+
           <Text style={styles.bioText}>
             {profile?.bio?.trim() ? profile.bio : "No bio yet. Start cooking!"}
           </Text>
 
           {/* Badges Row */}
           <View style={styles.badgesRow}>
-             <View style={styles.badgePill}>
-                <ChefHat size={12} color={theme.colors.primary.dark} />
-                <Text style={styles.badgeText}>{profile?.badgePrimary || "Newbie"}</Text>
-             </View>
-             <View style={[styles.badgePill, styles.badgeSecondary]}>
-                <Text style={[styles.badgeText, { color: "#B45309" }]}>{profile?.badgeSecondary || "Foodie"}</Text>
-             </View>
+            <View style={styles.badgePill}>
+              <ChefHat size={12} color={theme.colors.primary.dark} />
+              <Text style={styles.badgeText}>{profile?.badgePrimary || "Newbie"}</Text>
+            </View>
+            <View style={[styles.badgePill, styles.badgeSecondary]}>
+              <Text style={[styles.badgeText, { color: "#B45309" }]}>{profile?.badgeSecondary || "Foodie"}</Text>
+            </View>
           </View>
 
           {/* Stats Row (Dummy Data for Visual) */}
@@ -189,7 +177,7 @@ export default function Profile() {
 
           {/* Edit Profile Button */}
           <TouchableOpacity style={styles.editProfileBtn} onPress={openEdit}>
-             <Text style={styles.editProfileText}>Edit Profile</Text>
+            <Text style={styles.editProfileText}>Edit Profile</Text>
           </TouchableOpacity>
         </View>
 
@@ -207,31 +195,31 @@ export default function Profile() {
 
           {/* Grid Layout */}
           <View style={styles.grid}>
-             {/* Create New Card */}
-             <TouchableOpacity style={styles.createCard} onPress={() => Alert.alert("Coming Soon")}>
-                <View style={styles.createIconBg}>
-                   <Plus size={24} color={theme.colors.primary.DEFAULT} />
-                </View>
-                <Text style={styles.createText}>New Recipe</Text>
-             </TouchableOpacity>
+            {/* Create New Card */}
+            <TouchableOpacity style={styles.createCard} onPress={() => Alert.alert("Coming Soon")}>
+              <View style={styles.createIconBg}>
+                <Plus size={24} color={theme.colors.primary.DEFAULT} />
+              </View>
+              <Text style={styles.createText}>New Recipe</Text>
+            </TouchableOpacity>
 
-             {/* Dummy Recipe 1 */}
-             <View style={styles.miniCard}>
-                <View style={styles.miniCardImagePlaceholder} />
-                <View style={styles.miniCardContent}>
-                   <Text style={styles.miniCardTitle}>Avocado Toast</Text>
-                   <Text style={styles.miniCardMeta}>12 mins • Easy</Text>
-                </View>
-             </View>
+            {/* Dummy Recipe 1 */}
+            <View style={styles.miniCard}>
+              <View style={styles.miniCardImagePlaceholder} />
+              <View style={styles.miniCardContent}>
+                <Text style={styles.miniCardTitle}>Avocado Toast</Text>
+                <Text style={styles.miniCardMeta}>12 mins • Easy</Text>
+              </View>
+            </View>
 
-              {/* Dummy Recipe 2 */}
-              <View style={styles.miniCard}>
-                <View style={styles.miniCardImagePlaceholder} />
-                <View style={styles.miniCardContent}>
-                   <Text style={styles.miniCardTitle}>Beef Steak</Text>
-                   <Text style={styles.miniCardMeta}>45 mins • Hard</Text>
-                </View>
-             </View>
+            {/* Dummy Recipe 2 */}
+            <View style={styles.miniCard}>
+              <View style={styles.miniCardImagePlaceholder} />
+              <View style={styles.miniCardContent}>
+                <Text style={styles.miniCardTitle}>Beef Steak</Text>
+                <Text style={styles.miniCardMeta}>45 mins • Hard</Text>
+              </View>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -239,32 +227,32 @@ export default function Profile() {
       {/* Edit Modal - Bottom Sheet Style */}
       <Modal visible={editOpen} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
-           <View style={styles.modalContainer}>
-              <View style={styles.modalHeader}>
-                 <Text style={styles.modalTitle}>Edit Profile</Text>
-                 <TouchableOpacity onPress={() => setEditOpen(false)} style={styles.closeBtn}>
-                    <X size={20} color={theme.colors.neutral.dark} />
-                 </TouchableOpacity>
-              </View>
-              
-              <ScrollView style={styles.formContainer}>
-                 <Field label="Full Name" value={fullName} onChangeText={setFullName} />
-                 <Field label="Bio" value={bio} onChangeText={setBio} multiline />
-                 <Field label="Avatar URL" value={avatarUrl} onChangeText={setAvatarUrl} />
-                 <View style={{flexDirection: 'row', gap: 10}}>
-                    <View style={{flex:1}}>
-                      <Field label="Badge 1" value={badgePrimary} onChangeText={setBadgePrimary} />
-                    </View>
-                    <View style={{flex:1}}>
-                      <Field label="Badge 2" value={badgeSecondary} onChangeText={setBadgeSecondary} />
-                    </View>
-                 </View>
-              </ScrollView>
-
-              <TouchableOpacity style={styles.saveButton} onPress={saveProfile}>
-                 <Text style={styles.saveButtonText}>Save Changes</Text>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Edit Profile</Text>
+              <TouchableOpacity onPress={() => setEditOpen(false)} style={styles.closeBtn}>
+                <X size={20} color={theme.colors.neutral.dark} />
               </TouchableOpacity>
-           </View>
+            </View>
+
+            <ScrollView style={styles.formContainer}>
+              <Field label="Full Name" value={fullName} onChangeText={setFullName} />
+              <Field label="Bio" value={bio} onChangeText={setBio} multiline />
+              <Field label="Avatar URL" value={avatarUrl} onChangeText={setAvatarUrl} />
+              <View style={{ flexDirection: 'row', gap: 10 }}>
+                <View style={{ flex: 1 }}>
+                  <Field label="Badge 1" value={badgePrimary} onChangeText={setBadgePrimary} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Field label="Badge 2" value={badgeSecondary} onChangeText={setBadgeSecondary} />
+                </View>
+              </View>
+            </ScrollView>
+
+            <TouchableOpacity style={styles.saveButton} onPress={saveProfile}>
+              <Text style={styles.saveButtonText}>Save Changes</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
 
@@ -272,13 +260,13 @@ export default function Profile() {
   );
 }
 
-function Field({ label, value, onChangeText, multiline }: { label: string, value: string, onChangeText: (v:string)=>void, multiline?: boolean }) {
+function Field({ label, value, onChangeText, multiline }: { label: string, value: string, onChangeText: (v: string) => void, multiline?: boolean }) {
   return (
     <View style={styles.fieldGroup}>
       <Text style={styles.fieldLabel}>{label}</Text>
-      <TextInput 
-        style={[styles.input, multiline && styles.inputMulti]} 
-        value={value} 
+      <TextInput
+        style={[styles.input, multiline && styles.inputMulti]}
+        value={value}
         onChangeText={onChangeText}
         multiline={multiline}
         placeholder={`Enter your ${label.toLowerCase()}`}
@@ -321,9 +309,9 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   avatarImg: { width: 100, height: 100, borderRadius: 50, borderWidth: 4, borderColor: "#fff" },
-  avatarFallback: { 
-    width: 100, height: 100, borderRadius: 50, 
-    backgroundColor: theme.colors.neutral.light, 
+  avatarFallback: {
+    width: 100, height: 100, borderRadius: 50,
+    backgroundColor: theme.colors.neutral.light,
     justifyContent: 'center', alignItems: 'center',
     borderWidth: 4, borderColor: "#fff"
   },
@@ -334,15 +322,15 @@ const styles = StyleSheet.create({
     padding: 8, borderRadius: 20,
     borderWidth: 3, borderColor: "#fff",
   },
-  
+
   nameText: { fontSize: 22, fontFamily: theme.font.bold, color: theme.colors.neutral.dark, marginBottom: 4 },
   bioText: { fontSize: 14, fontFamily: theme.font.regular, color: theme.colors.neutral.medium, textAlign: 'center', paddingHorizontal: 20, lineHeight: 20 },
 
   // Badges
   badgesRow: { flexDirection: 'row', gap: 8, marginTop: 12 },
-  badgePill: { 
+  badgePill: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
-    paddingHorizontal: 12, paddingVertical: 6, 
+    paddingHorizontal: 12, paddingVertical: 6,
     borderRadius: 20, backgroundColor: theme.colors.primary.bg,
   },
   badgeSecondary: { backgroundColor: "#FFF7ED" },
@@ -405,7 +393,7 @@ const styles = StyleSheet.create({
   },
   createIconBg: { width: 48, height: 48, borderRadius: 24, backgroundColor: theme.colors.primary.bg, justifyContent: 'center', alignItems: 'center' },
   createText: { fontSize: 14, fontFamily: theme.font.bold, color: theme.colors.neutral.medium },
-  
+
   miniCard: {
     width: "48%", aspectRatio: 0.85,
     borderRadius: 16, backgroundColor: "#fff",
@@ -428,7 +416,7 @@ const styles = StyleSheet.create({
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
   modalTitle: { fontSize: 18, fontFamily: theme.font.bold, color: theme.colors.neutral.dark },
   closeBtn: { padding: 4, backgroundColor: "#F3F4F6", borderRadius: 20 },
-  
+
   formContainer: { marginBottom: 20 },
   fieldGroup: { marginBottom: 16 },
   fieldLabel: { fontSize: 12, fontFamily: theme.font.bold, color: theme.colors.neutral.dark, marginBottom: 8 },

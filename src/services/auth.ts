@@ -30,7 +30,7 @@ export async function register(name: string, email: string, password: string): P
   const rows = await querySql<any>("SELECT id FROM users WHERE email = ? LIMIT 1", [e]);
   if (rows[0]) throw new AuthError("EMAIL_ALREADY_USED");
 
-  await execSql("INSERT INTO users (name, email, password, created_at) VALUES (?,?,?,?)", [
+  await execSql("INSERT INTO users (fullName, email, password, created_at) VALUES (?,?,?,?)", [
     n,
     e,
     password,
