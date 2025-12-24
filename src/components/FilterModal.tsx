@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
 import { X } from 'lucide-react-native';
+import { CATEGORIES } from '../constants/categories';
 import { theme } from '../theme';
 
 // Mendefinisikan tipe untuk opsi sorting dan props
@@ -13,14 +14,6 @@ interface FilterModalProps {
   initialSortBy: SortOption;
   initialCategory: string;
 }
-
-const categories = [
-    { id: 'all', name: 'All' },
-    { id: 'special', name: 'Special' },
-    { id: 'healthy', name: 'Healthy' },
-    { id: 'dessert', name: 'Dessert' },
-    { id: 'traditional', name: 'Traditional' },
-];
 
 const sortOptions: { id: SortOption; label: string }[] = [
     { id: 'recommended', label: 'Recommended' },
@@ -83,7 +76,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ visible, onClose, onApply, in
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Category</Text>
           <View style={styles.optionsContainer}>
-            {categories.map((cat) => (
+            {CATEGORIES.map((cat) => (
               <TouchableOpacity
                 key={cat.id}
                 onPress={() => setSelectedCategory(cat.id)}

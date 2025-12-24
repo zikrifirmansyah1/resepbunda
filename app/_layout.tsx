@@ -1,13 +1,14 @@
 import { Stack, router, useSegments } from "expo-router";
 import React, { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useDatabase } from "../src/hooks/useDatabase";
 import { AuthProvider, useAuth } from "../src/providers/AuthProvider";
 import { theme } from "../src/theme";
 function Splash() {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: theme.colors.neutral.bg }}>
-      <ActivityIndicator color={theme.colors.primary} />
+      <ActivityIndicator color={theme.colors.primary.DEFAULT} />
     </View>
   );
 }
@@ -31,8 +32,10 @@ function GuardedStack({ appReady }: { appReady: boolean }) {
 export default function RootLayout() {
   const dbReady = useDatabase();
   return (
-    <AuthProvider dbReady={dbReady}>
-      <GuardedStack appReady={dbReady} />
-    </AuthProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AuthProvider dbReady={dbReady}>
+        <GuardedStack appReady={dbReady} />
+      </AuthProvider>
+    </GestureHandlerRootView>
   );
 }

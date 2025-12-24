@@ -44,6 +44,9 @@ async function ensureRecipesColumns() {
   if (!(await columnExists("recipes", "creator_email"))) {
     await execSql(`ALTER TABLE recipes ADD COLUMN creator_email TEXT;`);
   }
+  if (!(await columnExists("recipes", "image"))) {
+    await execSql(`ALTER TABLE recipes ADD COLUMN image TEXT;`);
+  }
 }
 
 async function seedRecipes() {

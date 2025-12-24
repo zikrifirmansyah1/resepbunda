@@ -1,7 +1,7 @@
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { ArrowLeft, CheckCircle2, ChefHat, Clock, Flame, Heart, PlayCircle, Share2, Users } from "lucide-react-native";
 import React, { useEffect, useMemo, useState } from "react";
-import { ScrollView, Share, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, ScrollView, Share, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { querySql } from "../../src/services/db";
 import { theme } from "../../src/theme";
@@ -80,9 +80,17 @@ export default function RecipeDetailScreen() {
       >
         {/* HERO IMAGE SECTION */}
         <View style={styles.heroContainer}>
-          <View style={styles.placeholderImage}>
-            <ChefHat size={80} color="rgba(255,255,255,0.2)" />
-          </View>
+          {recipe.image ? (
+            <Image 
+              source={{ uri: recipe.image }} 
+              style={styles.heroImage}
+              resizeMode="cover"
+            />
+          ) : (
+            <View style={styles.placeholderImage}>
+              <ChefHat size={80} color="rgba(255,255,255,0.2)" />
+            </View>
+          )}
           {/* Gradient-like Overlay */}
           <View style={styles.heroOverlay} />
         </View>
@@ -211,6 +219,10 @@ const styles = StyleSheet.create({
 
   // Hero Section
   heroContainer: { height: 380, width: "100%", backgroundColor: "#333" },
+  heroImage: {
+    width: "100%",
+    height: "100%",
+  },
   placeholderImage: { 
     flex: 1, 
     backgroundColor: theme.colors.neutral.dark, // Dark background for contrast

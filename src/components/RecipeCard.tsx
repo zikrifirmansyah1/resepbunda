@@ -1,6 +1,8 @@
-import { ArrowRight, ChefHat, Clock } from 'lucide-react-native';
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Clock, Heart } from 'lucide-react-native';
+import React, { useRef } from 'react';
+import { Alert, Animated, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Swipeable } from 'react-native-gesture-handler';
+import { getCategoryLabel } from '../constants/categories';
 import { theme } from '../theme';
 import { Recipe } from '../types/recipe';
 
@@ -9,197 +11,209 @@ interface RecipeCardProps {
   onPress: () => void;
 }
 
+const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&h=200&fit=crop';
+
 const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onPress }) => {
+  const swipeableRef = useRef<Swipeable>(null);
+
+  const addToFavorite = () => {
+    Alert.alert(
+      "Ditambahkan ke Favorit",
+      `"${recipe.title}" telah ditambahkan ke daftar favorit kamu!`,
+      [{ text: "OK" }]
+    );
+    swipeableRef.current?.close();
+  };
+
+  const renderRightActions = (
+    progress: Animated.AnimatedInterpolation<number>,
+    dragX: Animated.AnimatedInterpolation<number>
+  ) => {
+    const scale = dragX.interpolate({
+      inputRange: [-100, 0],
+      outputRange: [1, 0.5],
+      extrapolate: 'clamp',
+    });
+
+    return (
+      <TouchableOpacity
+        style={styles.swipeAction}
+        onPress={addToFavorite}
+        activeOpacity={0.8}
+      >
+        <Animated.View style={[styles.swipeActionContent, { transform: [{ scale }] }]}>
+          <Heart size={24} color={theme.colors.neutral.bg} fill={theme.colors.neutral.bg} />
+          <Text style={styles.swipeActionText}>Favorit</Text>
+        </Animated.View>
+      </TouchableOpacity>
+    );
+  };
+
   return (
-    <TouchableOpacity 
-      style={styles.cardContainer} 
-      onPress={onPress}
-      activeOpacity={0.9} // Sentuhan lebih responsif
+    <Swipeable
+      ref={swipeableRef}
+      renderRightActions={renderRightActions}
+      rightThreshold={40}
+      overshootRight={false}
     >
-      {/* Top Row: Header & Time */}
-      <View style={styles.headerRow}>
-        <View style={styles.titleWrapper}>
-          <Text style={styles.title} numberOfLines={2}>{recipe.title}</Text>
-          {recipe.isPrivate === 1 && (
-            <View style={styles.privateBadge}>
-              <Text style={styles.privateBadgeText}>PRIVATE</Text>
-            </View>
-          )}
-        </View>
+      <TouchableOpacity
+        style={styles.cardContainer}
+        onPress={onPress}
+        activeOpacity={0.98}
+      >
+        {/* Image Thumbnail */}
+        <View style={styles.imageContainer}>
+        <Image
+          source={{ uri: recipe.image || DEFAULT_IMAGE }}
+          style={styles.image}
+          resizeMode="cover"
+        />
+      </View>
+
+      {/* Content */}
+      <View style={styles.content}>
+        {/* Title */}
+        <Text style={styles.title} numberOfLines={1}>
+          {recipe.title || 'Untitled'}
+        </Text>
         
-        <View style={styles.timeBadge}>
-          <Clock size={12} color={theme.colors.neutral.medium} />
-          <Text style={styles.timeText}>{recipe.cookingTime}</Text>
+        {/* Description */}
+        <Text style={styles.description} numberOfLines={2}>
+          {recipe.description || 'Tidak ada deskripsi'}
+        </Text>
+
+        {/* Author */}
+        <Text style={styles.author}>
+          Oleh {recipe.creator || 'Anonymous'}
+        </Text>
+
+        {/* Footer: Time & Category */}
+        <View style={styles.footer}>
+          <View style={styles.timeContainer}>
+            <Clock size={14} color={theme.colors.neutral.medium} />
+            <Text style={styles.timeText}>{recipe.cookingTime || '- mnt'}</Text>
+          </View>
+          
+          <View style={styles.dot} />
+          
+          <Text style={styles.category}>{getCategoryLabel(recipe.category)}</Text>
         </View>
       </View>
-
-      {/* Description */}
-      <Text style={styles.description} numberOfLines={2}>
-        {recipe.description}
-      </Text>
-
-      {/* Divider (Optional, kept subtle) */}
-      <View style={styles.divider} />
-
-      {/* Footer: Creator & Action */}
-      <View style={styles.footerRow}>
-        <View style={styles.creatorSection}>
-          <View style={styles.avatarContainer}>
-            <Text style={styles.avatarText}>
-              {recipe.creator.charAt(0).toUpperCase()}
-            </Text>
-          </View>
-          <View>
-            <Text style={styles.creatorName}>{recipe.creator}</Text>
-            <View style={styles.creatorTypeWrapper}>
-              <ChefHat size={10} color={theme.colors.primary.DEFAULT} />
-              <Text style={styles.creatorType}>{recipe.creatorType}</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Modern Action Button */}
-        <View style={styles.actionButton}>
-          <ArrowRight size={18} color={theme.colors.primary.DEFAULT} />
-        </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </Swipeable>
   );
 };
 
 const styles = StyleSheet.create({
   cardContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
     backgroundColor: '#FFFFFF',
-    borderRadius: 20, // Lebih bulat = lebih modern
-    padding: 16,
-    marginBottom: 16,
-    // Soft Shadow (Elevation)
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.05, // Bayangan sangat halus
+    borderRadius: theme.radius.md,
+    padding: theme.spacing.sm,
+    gap: theme.spacing.md,
+    shadowColor: theme.colors.shadow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
     shadowRadius: 12,
-    elevation: 3, 
+    elevation: 3,
     borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.02)', // Border super tipis nyaris transparan
+    borderColor: theme.colors.neutral.light,
   },
   
-  // Header
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 8,
+  imageContainer: {
+    width: 96,
+    height: 96,
+    borderRadius: theme.radius.sm,
+    overflow: 'hidden',
+    backgroundColor: theme.colors.neutral.light,
   },
-  titleWrapper: {
+  
+  image: {
+    width: '100%',
+    height: '100%',
+  },
+
+  content: {
     flex: 1,
-    paddingRight: 12,
+    minHeight: 96,
+    paddingVertical: 2,
   },
+
   title: {
-    fontSize: 17,
+    fontSize: 16,
     fontFamily: theme.font.bold,
     color: theme.colors.neutral.dark,
-    lineHeight: 24, // Jarak antar baris judul lebih lega
+    lineHeight: 22,
+    marginBottom: 4,
   },
-  privateBadge: {
-    backgroundColor: '#FFF4E5', // Orange muda soft
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-    alignSelf: 'flex-start',
-    marginTop: 6,
+
+  description: {
+    fontSize: 12,
+    color: theme.colors.neutral.medium,
+    lineHeight: 18,
+    fontFamily: theme.font.regular,
+    marginBottom: 4,
   },
-  privateBadgeText: {
-    fontSize: 9,
-    fontFamily: theme.font.bold,
-    color: '#B45309', // Dark orange
-    letterSpacing: 0.5,
+
+  author: {
+    fontSize: 11,
+    fontFamily: theme.font.semibold,
+    color: theme.colors.neutral.dark,
+    marginBottom: theme.spacing.xs,
   },
-  timeBadge: {
+
+  footer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F3F4F6', // Light gray background
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 12,
+    marginTop: 'auto',
+  },
+
+  timeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 4,
   },
+
   timeText: {
     fontSize: 12,
     fontFamily: theme.font.medium,
     color: theme.colors.neutral.medium,
   },
 
-  // Description
-  description: {
-    fontSize: 14,
+  dot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: theme.colors.neutral.light,
+    marginHorizontal: 10,
+  },
+
+  category: {
+    fontSize: 12,
+    fontFamily: theme.font.medium,
     color: theme.colors.neutral.medium,
-    lineHeight: 20,
-    fontFamily: theme.font.regular,
-    marginBottom: 16,
   },
 
-  divider: {
-    height: 1,
-    backgroundColor: '#F3F4F6',
-    marginBottom: 12,
+  swipeAction: {
+    backgroundColor: theme.colors.danger.DEFAULT,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 80,
+    borderRadius: theme.radius.md,
+    marginLeft: theme.spacing.xs,
   },
 
-  // Footer
-  footerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  creatorSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  avatarContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: theme.colors.primary.bg, // Menggunakan warna tema soft
+  swipeActionContent: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  avatarText: {
-    fontFamily: theme.font.bold,
-    color: theme.colors.primary.DEFAULT,
-    fontSize: 16,
-  },
-  creatorName: {
-    fontSize: 13,
-    fontFamily: theme.font.bold,
-    color: theme.colors.neutral.dark,
-  },
-  creatorTypeWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
     gap: 4,
   },
-  creatorType: {
-    fontSize: 11,
-    color: theme.colors.neutral.medium,
-    fontFamily: theme.font.medium,
-  },
 
-  // Tombol Panah (Action)
-  actionButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#F3F4F6',
-    // Shadow kecil untuk tombol
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+  swipeActionText: {
+    color: theme.colors.neutral.bg,
+    fontSize: 11,
+    fontFamily: theme.font.semibold,
   },
 });
 

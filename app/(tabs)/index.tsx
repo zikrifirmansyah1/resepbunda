@@ -14,18 +14,11 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import FilterModal, { SortOption } from "../../src/components/FilterModal";
 import RecipeCard from "../../src/components/RecipeCard";
+import { CATEGORIES } from "../../src/constants/categories";
 import { useLogoutConfirmation } from "../../src/hooks/useLogoutConfirmation";
 import { querySql } from "../../src/services/db";
 import { theme } from "../../src/theme";
 import type { Recipe } from "../../src/types/recipe";
-
-const categories = [
-  { id: "all", name: "All" },
-  { id: "special", name: "Special" },
-  { id: "healthy", name: "Healthy" },
-  { id: "dessert", name: "Dessert" },
-  { id: "traditional", name: "Traditional" },
-];
 
 const parseNumber = (str: string) => parseInt(String(str).replace(/\D/g, "")) || 0;
 
@@ -143,7 +136,7 @@ export default function HomeScreen() {
         contentContainerStyle={styles.categoryScrollContent}
         style={styles.categoryScroll}
       >
-        {categories.map((category) => {
+        {CATEGORIES.map((category) => {
           const isActive = selectedCategory === category.id;
           return (
             <TouchableOpacity
@@ -219,7 +212,7 @@ const styles = StyleSheet.create({
   },
   cardWrapper: {
     paddingHorizontal: theme.spacing.md,
-    marginBottom: 4,
+    marginBottom: theme.spacing.md,
   },
 
   // Header Styles

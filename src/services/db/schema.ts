@@ -39,7 +39,8 @@ export const schema = {
       rating REAL,
       calories TEXT,
       ingredients TEXT,
-      steps TEXT
+      steps TEXT,
+      image TEXT
     );
   `,
 

@@ -12,6 +12,7 @@ export interface Recipe {
   calories: string;
   ingredients: string; // JSON stringified array
   steps: string; // JSON stringified array
+  image?: string; // local image URI or null
 }
 
 export interface Category {
